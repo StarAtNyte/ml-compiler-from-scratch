@@ -789,7 +789,7 @@ that never raises.
 1. ★ **Predict the output.** For `x = PARAM(slot=0, f32)`, how many nodes does
    `(x * x) + (x * x) * (x * x)` contain? What does `to_uir` print? Check your answer.
 
-2. ★ **Implement** `UOp.__sub__` without looking at the source, so that `x - 2` on an i32 PARAM prints
+2. ★ **Subtraction.** Implement `UOp.__sub__` without looking at the source, so that `x - 2` on an i32 PARAM prints
    as `mul`/`add` lines. Why does `-1` need to be `-1` for i32 and `-1.0` for f32?
 
 3. ★ **Find the bug.** A student's cache uses `key = (op, src, arg)` and adds `and type(arg)` to the
@@ -832,7 +832,8 @@ that never raises.
     week-1 program of size O(n) that computes `2^(2^n)` mod 2³² (hint: squaring). What does this say
     about "bounded by program size" when constants wrap around?
 
-<details><summary>Solutions to ★ exercises</summary>
+<details>
+<summary>Solutions to ★ exercises</summary>
 
 1. `x * x` is one node, used three times; `(x*x) * (x*x)` is a MUL with both sources the same node;
    the root is an ADD. With the PARAM that is 4 nodes:
@@ -868,7 +869,8 @@ that never raises.
    return, and why does it skip `src[0]` of the inner CALL but not `src[1:]`?
 8. Is the week-1 language Turing complete? Is the week-3 language (with bounded RANGE loops)?
 
-<details><summary>Answers</summary>
+<details>
+<summary>Answers</summary>
 
 1. Free: O(1) structural equality (`is`), common subexpression elimination, O(1) memoization keyed by
    node, acyclicity. Forced: immutability (and anything that must be distinct must differ in its

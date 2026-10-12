@@ -69,7 +69,7 @@ compulsory (each input read once): 134 MB
 
 The closed form is intensity = BM·BN / (2(BM + BN)) FLOP per byte, which is **T/4** for a square T × T tile.
 The A100's FP32 ridge point is about 12.5 FLOP/byte (Chapter 12). So a 16×16 tile is still memory-bound, and
-64×64 or 128×128 tiles clear the ridge comfortably. Two caveats keep this honest. First, the naive row
+64×64 or 128×128 tiles clear the ridge comfortably. Two caveats apply. First, the naive row
 overstates real traffic, because L1 and L2 catch many of those repeated loads, so the measured gap is smaller
 than 140×. Second, caches are not *guaranteed* to catch them, and a 4096² matrix (64 MB) does not fit in a 40
 MB L2. Shared memory turns "hopefully cached" into "certainly on chip".
@@ -109,7 +109,7 @@ BARRIER = auto()    # (*deps): __syncthreads()
 
 Its semantics: *no thread in the block proceeds past the barrier until every thread in the block has
 reached it, and all shared-memory writes made before it are visible to all threads after it.* In SSA terms
-(Chapter 4), a barrier is an `AFTER` that waits on *other threads'* stores, not just this thread's. The
+(Chapter 4), a barrier is an `AFTER` that waits on *other threads'* stores as well as this thread's. The
 renderers spell it with a class attribute: `CUDARenderer.barrier = "__syncthreads()"`, and the base
 `CRenderer.barrier = None`. The `None` is deliberate: the C renderer has no meaning for a barrier, and
 `emulate` refuses barrier kernels outright. That is how NOTES 25 shows up in Section 13.5.

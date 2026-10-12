@@ -719,7 +719,7 @@ The rule is `(UPat(Ops.CALL, name="call"), inline_call)`:
 @include uopc/symbolic.py#inline_call
 
 It builds a map from each of the body's PARAMs to the corresponding argument, then rebuilds the body
-bottom-up, substituting. It is `UOp.substitute` from [Chapter 1](01-uops.md) with one crucial
+bottom-up, substituting. It is `UOp.substitute` from [Chapter 1](01-uops.md) with one important
 difference, in two places: when it meets a nested CALL, it *does not descend into its body*
 (`u.src[1:] if u.op is Ops.CALL`), and when rebuilding a nested CALL, it keeps `u.src[0]` unchanged.
 The PARAM-finding helper `call_params` has the same restriction.
@@ -877,7 +877,7 @@ of its meaning, and put the most specific rules first.
    will need to synthesize instances from patterns). Did you find any rule that is unsound for some
    int32 values? (Think about overflow.)
 
-7. ★★ **Implement `inline_call` yourself**, then write a test with three levels of nesting where the
+7. ★★ **Inlining by hand.** Implement `inline_call` yourself, then write a test with three levels of nesting where the
    outer argument mentions the outer PARAM (like section 2.6's `f`, `g`, `sq`), that fails for the
    naive version and passes for yours. Call `inline_call` directly on the middle CALL, not via `run`.
 
@@ -898,7 +898,8 @@ of its meaning, and put the most specific rules first.
     `PatternMatcher`. Measure `simplify` on a large index expression before and after. (tinygrad
     compiles its patterns too; find its pattern compiler in `tinygrad/uop/` after you've tried.)
 
-<details><summary>Solutions to ★ exercises</summary>
+<details>
+<summary>Solutions to ★ exercises</summary>
 
 1. `p0 * 1` is built once (hash consing), so the root is `add(m, m)` with `m = mul(p0, 1)`:
 
@@ -944,7 +945,8 @@ of its meaning, and put the most specific rules first.
    α-renaming (the usual fix in the lambda calculus) apply here?
 8. `run` evaluates `[1,2,3] * [10,20,30]`. Name the two rules that fire, in order.
 
-<details><summary>Answers</summary>
+<details>
+<summary>Answers</summary>
 
 1. A term with no redex (no rule applies anywhere). Termination (some normal form is always reached)
    and confluence (all rewrite paths reach the same one).

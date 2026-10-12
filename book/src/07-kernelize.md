@@ -31,7 +31,7 @@ rangeify. It calls `lower()` from Chapter 6 once per kernel and the renderer and
 Unless stated otherwise, the listings in this chapter were produced with `OPT=0` (no week-6
 optimizer, so the C stays readable) and with the renderer's four-line prelude removed.
 
-## Why one giant loop nest is wrong
+## 7.1 Why one giant loop nest is wrong
 
 Here is `(A @ B) @ C` built with the movement ops of Chapter 6 and lowered as a single kernel
 (`N = 4` to keep the listing short):
@@ -139,7 +139,7 @@ The last row deserves emphasis. A movement op never becomes a kernel by itself u
 (the user asked for a transposed copy) or the week-6 layout pass decides a copy pays for itself
 ([Chapter 10](10-cpu-performance.md)). Views are free; that was the point of Chapter 6.
 
-## Materialization points
+## 7.2 Materialization points
 
 The kernelizer's policy is deliberately simple. A node is **materialized** (computed by its own
 kernel and written to a buffer) if it is:
@@ -184,7 +184,7 @@ and once inside the output kernel. That is a recomputation too, but a constant f
 cheap elementwise op, which is far cheaper than writing and re-reading an `(N, N)` temporary.
 Fusion is a policy, not a law.
 
-## make_plan: from a graph to kernels
+## 7.3 make_plan: from a graph to kernels
 
 Here is the kernelizer in full. It takes the roots, returns a `Plan` and the list of input
 `BUFFER`s the plan refers to:
@@ -312,7 +312,7 @@ The FLOP count is a rough "one per ALU element plus one per reduced element", go
 GFLOP/s column of `DEBUG=2` and for comparing kernels with each other.
 [Chapter 10](10-cpu-performance.md) counts FLOPs more carefully.
 
-## Identical kernels, identical C
+## 7.4 Identical kernels, identical C
 
 Step 7, the local renumbering, looks like bookkeeping. It is an optimization with a large payoff.
 Two kernels that do the same thing to different buffers, say the row sums of two different `(16, 16)`
@@ -332,7 +332,7 @@ source and flags, so the second kernel costs no compilation. In a transformer, e
 same shapes: twelve layers produce twelve copies of each kernel and one compilation. The kernel
 name intentionally carries no buffer numbers, for the same reason.
 
-## The Plan
+## 7.5 The Plan
 
 The output of kernelization is a `Plan`:
 
@@ -355,7 +355,7 @@ run; that is simpler, but every step then paid page faults on freshly mapped mem
 
 @diagram 07-plan
 
-## Buffers belong to UOps
+## 7.6 Buffers belong to UOps
 
 Where does the data for "input 0" live? In the `BUFFER` UOp itself:
 
@@ -376,7 +376,7 @@ The consequence for a training loop is pleasant: after a step, `Tensor.uop` of e
 rebound to its new output buffer, the old graph becomes unreachable, and every intermediate buffer
 of the previous step is freed.
 
-## realize(): running a plan
+## 7.7 realize(): running a plan
 
 `realize` is the function the Tensor library calls when you ask for data (`.numpy()`, `.item()`,
 `realize_all`):
@@ -426,7 +426,7 @@ realize: 2 kernels, schedule 153.1 ms, run 1.1 ms
 The first run of `e_256_256` is about 50% slower than the second because it writes to a freshly
 allocated temporary: the first touch of every 4 KB page is a page fault. Benchmark with warm runs.
 
-## The structural JIT cache
+## 7.8 The structural JIT cache
 
 A training loop builds a new graph every step: new parameter buffers, new data, same model. Running
 rangeify, simplify, and the renderer for every step would cost seconds per step for a GPT (the
@@ -498,7 +498,7 @@ one plan. [Chapter 15](15-beyond.md) shows the real fix: symbolic shapes.
 > **Key idea:** the JIT cache splits every value into *structure* (ops, shapes, constants) and
 > *data* (buffer contents). Anything that changes between steps must be data.
 
-## STAGE: asking for a buffer
+## 7.9 STAGE: asking for a buffer
 
 `STAGE` is the IR's fission knob. `UOp(Ops.STAGE, (x,))` means "materialize `x` into a temporary
 and let consumers index into it". It has no semantics beyond identity: rangeify without a
@@ -512,7 +512,7 @@ temp, and an `r_256` that sums it (the `DEBUG=3` output above). Without `.contig
 one fused `r_256`. Which is faster depends on the consumer, and the next section is about the one
 case where the compiler should decide on its own.
 
-## The recompute trap: stage_broadcast_compute
+## 7.10 The recompute trap: stage_broadcast_compute
 
 Cutting at every `REDUCE` prevents reductions from being recomputed. It does nothing about
 *elementwise* chains that are broadcast into a reduction. The canonical case is a LayerNorm feeding
@@ -609,7 +609,7 @@ void r_128_256(float* restrict data0, float* restrict data1, float* restrict dat
 }
 ```
 
-How much does it buy? It depends on what else limits the kernel, which is an honest lesson about
+How much does it buy? It depends on what else limits the kernel, which is a lesson about
 cost models. I timed the whole plan (best of 5 runs) both ways:
 
 ```text
@@ -664,7 +664,7 @@ substitute: STAGE nodes = 1
 wrap:       STAGE nodes = 2
 ```
 
-## fuse_reduce: letting reductions nest
+## 7.11 fuse_reduce: letting reductions nest
 
 The default cuts at every `REDUCE`. With `fuse_reduce=True`, reductions are not materialization
 points; they fuse into their consumers, and rangeify's accumulator placement decides the loop
@@ -709,7 +709,7 @@ attention, where fusing the softmax reductions into the attention kernel and kee
 in registers is the first step toward flash attention ([Chapter 11](11-fusion-flash.md)). A smarter
 kernelizer would decide per reduction; Exercise 8 asks you to write that rule.
 
-## The whole step, end to end
+## 7.12 The whole step, end to end
 
 Putting Chapters 6, 7 and 8 together on a tiny model (a linear layer, ReLU, mean of squares) and
 kernelizing the loss *and* the gradient of the weight in one plan:
@@ -733,7 +733,7 @@ graph refers to the very same `REDUCE` node as the forward graph (hash consing),
 materialization point with one temp. [Chapter 8](08-autodiff.md) explains how that gradient graph is
 built.
 
-## Building it yourself: an order of work
+## 7.13 Building it yourself: an order of work
 
 If you are implementing week 5 from this chapter, this order keeps every step testable:
 
@@ -852,8 +852,8 @@ a later optimization can invalidate.
    byte, from [Chapter 10](10-cpu-performance.md)'s roofline), and stage only when the model says
    so. Compare with the fixed thresholds on the LayerNorm example at `OPT=0` and `OPT=1`.
 
-<details markdown="1">
-<summary>Solutions to the ★ exercises</summary>
+<details>
+<summary>Solutions to ★ exercises</summary>
 
 **1.** `a + b`: 1 (elementwise, fused). `(a + b).sum()`: 1 (the add fuses into the reduction, and the
 reduction is the root). `a.softmax(-1)`: 3 (max, sum, output). `a.var(-1)`: the mean is a `REDUCE`,
@@ -885,7 +885,7 @@ reads temp 1 and scales it by `1/8` into the output.
 7. When does `stage_broadcast_compute` insert a `STAGE`?
 8. Who frees the memory of an intermediate buffer, and when?
 
-<details markdown="1">
+<details>
 <summary>Answers</summary>
 
 1. Roots (unless already contiguous buffers), `STAGE` nodes, and `REDUCE` nodes (unless

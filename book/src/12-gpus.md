@@ -95,7 +95,7 @@ each other. Block 900 may not have started when block 0 finishes, so a barrier b
 The only communication between blocks is through global memory, normally across a kernel boundary.
 
 The thread index has a fixed linearization: `tid = threadIdx.x + blockDim.x * (threadIdx.y + blockDim.y *
-threadIdx.z)`, and warp *w* is threads `32w … 32w+31`. In other words **`.x` varies fastest**. Consecutive
+threadIdx.z)`, and warp *w* is threads `32w … 32w+31`, so **`.x` varies fastest**. Consecutive
 `threadIdx.x` values sit in the same warp and execute the same load instruction in the same cycle. That single
 fact decides which loop axis we map to `.x` (Section 12.5).
 
@@ -268,8 +268,8 @@ where `gidx` is a `GLOBAL` range of size `s / (local·upcast)`, `lidx` is a `LOC
 @include uopc/rangeify.py#_gpu_axis
 
 It reuses the machinery from Chapter 10. `_gpu_axis` returns the same `(base, factor)` pair that `_axis_parts`
-returns for CPU axes, and `_combos` turns those pairs into the unrolled index tuples. Two details are worth
-noticing:
+returns for CPU axes, and `_combos` turns those pairs into the unrolled index tuples. Two details
+matter:
 
 - An axis that needs only one block gets `CONST 0` instead of a range, so a 16×32 kernel run as one block has
   no `blockIdx` at all (you will see this in the softmax kernel in 12.9).
@@ -357,7 +357,7 @@ print("max error:", np.abs(c - (a*2+b)).max())
 ```
 
 ```text
-opts: Opts(upcast={}, thread=None, unroll=1, gpu=True, local={1: 16, 0: 16})
+opts: Opts(upcast={}, thread=None, unroll=1, tile={}, gpu=True, local={1: 16, 0: 16})
 launch: ((8, 4, 1), (16, 16, 1))
 ```
 
@@ -441,7 +441,7 @@ for name, o in [("plain", Opts(gpu=True)), ("local", Opts(gpu=True, local={0: 8,
 **Configuration 1: one thread per block.**
 
 ```text
-=== plain: Opts(upcast={}, thread=None, unroll=1, gpu=True, local={})
+=== plain: Opts(upcast={}, thread=None, unroll=1, tile={}, gpu=True, local={})
 launch (grid, block): ((64, 64, 1), (1, 1, 1))
 ```
 
@@ -475,7 +475,7 @@ kind `REDUCE` from Chapter 6, and the accumulator `acc0` is a register. The line
 **Configuration 2: 16×8 threads per block.**
 
 ```text
-=== local: Opts(upcast={}, thread=None, unroll=1, gpu=True, local={0: 8, 1: 16})
+=== local: Opts(upcast={}, thread=None, unroll=1, tile={}, gpu=True, local={0: 8, 1: 16})
 launch (grid, block): ((4, 8, 1), (16, 8, 1))
 ```
 
@@ -512,7 +512,7 @@ are coalesced, which is the analysis from 12.5 seen in source.
 **Configuration 3: what `gpu_opt_choice` picks.**
 
 ```text
-=== auto: Opts(upcast={1: 2, 0: 2}, thread=None, unroll=1, gpu=True, local={1: 16, 0: 16})
+=== auto: Opts(upcast={1: 2, 0: 2}, thread=None, unroll=1, tile={}, gpu=True, local={1: 16, 0: 16})
 launch (grid, block): ((2, 2, 1), (16, 16, 1))
 ```
 
@@ -619,11 +619,11 @@ except NotImplementedError as e: print(s, "-> NotImplementedError:", e)
 ```
 
 ```text
-(1024,) -> Opts(upcast={}, thread=None, unroll=1, gpu=True, local={0: 256})
-(4096,) -> Opts(upcast={}, thread=None, unroll=1, gpu=True, local={0: 256})
-(64, 64) -> Opts(upcast={}, thread=None, unroll=1, gpu=True, local={1: 16, 0: 16})
-(3, 100) -> Opts(upcast={}, thread=None, unroll=1, gpu=True, local={1: 4})
-(8, 64, 64) -> Opts(upcast={}, thread=None, unroll=1, gpu=True, local={2: 16, 1: 16})
+(1024,) -> Opts(upcast={}, thread=None, unroll=1, tile={}, gpu=True, local={0: 256})
+(4096,) -> Opts(upcast={}, thread=None, unroll=1, tile={}, gpu=True, local={0: 256})
+(64, 64) -> Opts(upcast={}, thread=None, unroll=1, tile={}, gpu=True, local={1: 16, 0: 16})
+(3, 100) -> Opts(upcast={}, thread=None, unroll=1, tile={}, gpu=True, local={1: 4})
+(8, 64, 64) -> Opts(upcast={}, thread=None, unroll=1, tile={}, gpu=True, local={2: 16, 1: 16})
 (8, 4, 64, 64) -> NotImplementedError: more than 3 non-trivial output axes: reshape first
 ```
 
@@ -638,7 +638,7 @@ The second test in `tests/test_w07_gpu.py` is the numerator of a softmax, `exp2(
 16×32 matrix. The `max` is a `REDUCE` whose result is broadcast back over the row:
 
 ```text
-Opts(upcast={1: 2}, thread=None, unroll=1, gpu=True, local={1: 16, 0: 16})
+Opts(upcast={1: 2}, thread=None, unroll=1, tile={}, gpu=True, local={1: 16, 0: 16})
 ((1, 1, 1), (16, 16, 1))
 ```
 

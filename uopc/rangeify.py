@@ -46,6 +46,7 @@ class Opts:
   upcast: dict[int, int] = field(default_factory=dict)   # output axis -> unroll factor (register tile)
   thread: int | None = None                              # output axis run in parallel (OpenMP)
   unroll: int = 1                                        # unroll factor of the innermost reduce axis
+  tile: dict[int, int] = field(default_factory=dict)     # output axis -> cache block size (week 6, loop tiling)
   gpu: bool = False                                      # weeks 7-8: output axes become GLOBAL (blockIdx) ranges
   local: dict[int, int] = field(default_factory=dict)    # output axis -> threads per block on that axis (LOCAL)
 
@@ -178,9 +179,18 @@ def lower(root: UOp, out: UOp, ctx: Ctx | None = None) -> UOp:
   else:
     # the THREAD axis gets the lowest range index, so it is the outermost loop
     order = ([o.thread] if o.thread is not None else []) + [k for k in range(len(root.shape)) if k != o.thread]
+    tiled = {k: t for k, t in o.tile.items() if 1 < t < root.shape[k] and root.shape[k] % t == 0 and t % o.upcast.get(k, 1) == 0}
     parts: dict[int, tuple[UOp, int]] = {}
+    # tiled axes: first every block loop (outer), then the loops inside a block. A block of outputs reuses
+    # the same rows of each operand, so they stay in cache while the block is computed
+    outer = {k: ctx.rng(root.shape[k] // t, AxisType.THREAD if k == o.thread else AxisType.LOOP) for k, t in tiled.items()}
     for k in order:
-      parts[k] = _axis_parts(ctx, root.shape[k], o.upcast.get(k, 1), AxisType.THREAD if k == o.thread else AxisType.LOOP)
+      f = o.upcast.get(k, 1)
+      if k in tiled:
+        inner = tiled[k] // f
+        parts[k] = (outer[k] * inner + ctx.rng(inner) if inner > 1 else outer[k], f)
+      else:
+        parts[k] = _axis_parts(ctx, root.shape[k], f, AxisType.THREAD if k == o.thread else AxisType.LOOP)
     plist = [parts[k] for k in range(len(root.shape))]
   stores = []
   for idx in _combos(plist):

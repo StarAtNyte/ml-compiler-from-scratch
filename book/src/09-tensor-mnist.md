@@ -99,7 +99,7 @@ the first version got this wrong).
 It rebinds the Python object to a new graph. Buffers are never written in place by user code; a
 parameter update builds `p - lr * g` and then makes `p` *point at* that expression. When the expression
 is realized, `p.uop` becomes the new BUFFER and the old one is garbage-collected along with its UOp. This
-functional style keeps autodiff honest (no node ever changes its value) and lets the kernelizer
+functional style keeps autodiff sound (no node ever changes its value) and lets the kernelizer
 reason purely about graphs.
 
 ## 9.3 Broadcasting
@@ -336,7 +336,7 @@ Is it right? A `(1, 2, 5, 5)` input, `(3, 2, 3, 3)` weights, `padding=1`, checke
 (1, 3, 5, 5) max err 1.4305115e-06
 ```
 
-Is it fast? Here is the reduce kernel, with `OPT=0`. It is worth staring at, because it is the honest
+Is it fast? Here is the reduce kernel, with `OPT=0`. It is worth reading closely, because it is the plain
 output of a compiler that has not yet learned anything about convolutions:
 
 ```c
@@ -649,7 +649,8 @@ weights directly instead of adding `wd * p` to the gradient, which in Adam would
 The only surprising lines are `c1` and `c2`. The bias corrections depend on `t`, which changes every step.
 Written as Python floats they would become CONST nodes in the graph, the graph would be *structurally
 different* every step, and the structural JIT cache would miss every time. Passed as one-element tensors
-they are BUFFERs, whose contents do not participate in the cache key. Here is the difference, measured
+they are BUFFERs, whose contents do not participate in the cache key (see section 7.8 in
+[Chapter 7](07-kernelize.md)). Here is the difference, measured
 by a scratch subclass `AdamWFloats` whose `step` is identical except that `c1, c2` are floats (time per
 training step of the MNIST MLP, in ms, first eight steps):
 
@@ -886,10 +887,9 @@ If you are implementing this for the course, here is an order that keeps every s
 
 ## Pitfalls
 
-**A changing Python constant defeats the JIT cache (NOTES 17).** Shown in 9.12: AdamW's bias corrections
-as floats made every step more than ten times slower. The symptom is "every step is as slow as the first". Check with
-`DEBUG=1`: if the `schedule` time does not drop to about a millisecond after step 0, something structural
-changes between steps. Learning-rate schedules, dropout masks and step counters must all be tensors.
+**A changing Python constant defeats the JIT cache (NOTES 17).** Section 9.12 measured it: AdamW's bias
+corrections as floats made every step more than ten times slower. Learning-rate schedules, dropout masks
+and step counters must all be tensors (see [Chapter 7](07-kernelize.md), Pitfalls).
 
 **Forgetting to realize optimizer state.** `realize_all(*news, *self.m, *self.v, *extra)` is not
 decoration. A scratch `LeakyAdamW` that realizes only the parameters still trains correctly, because the
@@ -957,12 +957,10 @@ eventually disagree. Derive one from the other.
 **Unstable softmax.** If you write `x.exp() / x.exp().sum(-1, keepdim=True)`, it works on small random
 inputs and returns NaN on real logits above about 88. Always subtract the max; test with `x + 1000`.
 
-**Fusion can recompute a lot (NOTES 15).** Fusion recomputes anything elementwise that is not a
-materialization point. In softmax that is one `exp2f`, which is cheap. In a transformer, a LayerNorm output
-feeding a matmul gets recomputed for every output column: a GPT step spent 374 ms in kernels until
-`stage_broadcast_compute` ([Chapter 7](07-kernelize.md)) started staging such operands, bringing it to
-125 ms. If one kernel in `DEBUG=2` output is mysteriously slow, read its C and look for an expensive
-expression inside the reduce loop.
+**Fusion can recompute a lot (NOTES 15).** In softmax the recomputed value is one cheap `exp2f`, but in a
+transformer a LayerNorm output feeding a matmul is recomputed for every output column (see
+[Chapter 7](07-kernelize.md), Pitfalls). If one kernel in `DEBUG=2` output is mysteriously slow, read its C
+and look for an expensive expression inside the reduce loop.
 
 **Reading the loss before `backward` used to zero the gradients.** `.item()` realizes the loss, and
 realizing *rebinds* `loss.uop` to the BUFFER holding the result (9.1). In the first version that was the
@@ -1005,54 +1003,45 @@ Both fixes are pinned by one test: realizing before `backward` keeps the gradien
 
 ## Exercises
 
-**9.1** ★ Predict how many kernels `(x - x.mean(-1, keepdim=True)).square().sum()` produces for `x` of shape
-`(64, 64)`, then check with `make_plan`. *Hint:* count REDUCEs.
-
-**9.2** ★ What does `Tensor(np.array([[3., 1., 3.]], np.float32)).argmax(-1).numpy()` print, and why? What
-would happen if the trick used `idx` instead of `n - idx`?
-
-**9.3** ★ Implement `Tensor.std(axis, keepdim)` and `Tensor.logsumexp`-based `cross_entropy` (use
-`logsumexp` instead of `log_softmax`). Gradient-check both.
-
-**9.4** ★★ Implement `Tensor.gather(axis, idx)` for integer index tensors using `one_hot` and a reduce, so
-that it is differentiable with respect to the data. What does it cost in FLOPs compared to a real gather?
-
-**9.5** ★★ Add a learning-rate schedule (linear warmup, then cosine decay) to `AdamW` without causing JIT
-cache misses. Verify with `DEBUG=1` that `schedule` stays around a millisecond after step 0.
-
-**9.6** ★★ Revert the `alive` filter in `make_plan` (in a scratch copy), watch
-`test_deleted_reads_do_not_shift_kernel_arguments` fail, then fix it the *other* way: render every buffer
-of the body as a C parameter even when it is unused. Which fix is better, and why? *Hint:* think about
-the structural cache and about identical kernels rendering identical C.
-
-**9.7** ★★ Implement dropout: `x.dropout(p)` in training mode multiplies by a random 0/(1/(1-p)) mask.
-Where must the randomness come from so that the graph structure is the same every step?
-
-**9.8** ★★ Train a small CNN on MNIST (`Conv2d(1, 8, 3)`, ReLU, `max_pool2d`, `Linear`). Report accuracy
-and ms/step, and identify the slowest kernel with `DEBUG=2`. Explain its cost from its C source.
-
-**9.9** ★★ Use `detach()` to stop the gradient through the max in `log_softmax` (it is mathematically
-zero, see 9.14). Count the kernels per training step before and after, and check that the losses are
-unchanged to the printed precision.
-
-**9.10** ★★★ Make `conv2d` fast: instead of a STACK of shrinks selected with a WHERE chain, express the
-kernel taps as extra reduce axes (shape `(N, O, OH, OW, C, KH, KW)` reduced over the last three). Compare
-the generated C and the speed against 9.7's kernel on a `(64, 16, 28, 28)` input.
+1. ★ **Count kernels.** Predict how many kernels `(x - x.mean(-1, keepdim=True)).square().sum()` produces for `x` of shape
+   `(64, 64)`, then check with `make_plan`. *Hint:* count REDUCEs.
+2. ★ **Predict argmax.** What does `Tensor(np.array([[3., 1., 3.]], np.float32)).argmax(-1).numpy()` print, and why? What
+   would happen if the trick used `idx` instead of `n - idx`?
+3. ★ **Std and cross-entropy.** Implement `Tensor.std(axis, keepdim)` and `Tensor.logsumexp`-based `cross_entropy` (use
+   `logsumexp` instead of `log_softmax`). Gradient-check both.
+4. ★★ **A differentiable gather.** Implement `Tensor.gather(axis, idx)` for integer index tensors using `one_hot` and a reduce, so
+   that it is differentiable with respect to the data. What does it cost in FLOPs compared to a real gather?
+5. ★★ **A learning-rate schedule.** Add a learning-rate schedule (linear warmup, then cosine decay) to `AdamW` without causing JIT
+   cache misses. Verify with `DEBUG=1` that `schedule` stays around a millisecond after step 0.
+6. ★★ **Unused buffers.** Revert the `alive` filter in `make_plan` (in a scratch copy), watch
+   `test_deleted_reads_do_not_shift_kernel_arguments` fail, then fix it the *other* way: render every buffer
+   of the body as a C parameter even when it is unused. Which fix is better, and why? *Hint:* think about
+   the structural cache and about identical kernels rendering identical C.
+7. ★★ **Dropout.** Implement dropout: `x.dropout(p)` in training mode multiplies by a random 0/(1/(1-p)) mask.
+   Where must the randomness come from so that the graph structure is the same every step?
+8. ★★ **A small CNN.** Train a small CNN on MNIST (`Conv2d(1, 8, 3)`, ReLU, `max_pool2d`, `Linear`). Report accuracy
+   and ms/step, and identify the slowest kernel with `DEBUG=2`. Explain its cost from its C source.
+9. ★★ **Detach the max.** Use `detach()` to stop the gradient through the max in `log_softmax` (it is mathematically
+   zero, see section 9.14). Count the kernels per training step before and after, and check that the losses are
+   unchanged to the printed precision.
+10. ★★★ **Fast convolution.** Make `conv2d` fast: instead of a STACK of shrinks selected with a WHERE chain, express the
+   kernel taps as extra reduce axes (shape `(N, O, OH, OW, C, KH, KW)` reduced over the last three). Compare
+   the generated C and the speed against section 9.7's kernel on a `(64, 16, 28, 28)` input.
 
 <details>
-<summary>Solutions to the ★ exercises</summary>
+<summary>Solutions to ★ exercises</summary>
 
-**9.1** Two: `make_plan` reports `['r_64', 'r_1']`. The `mean` REDUCE is one materialization point
+**1.** Two: `make_plan` reports `['r_64', 'r_1']`. The `mean` REDUCE is one materialization point
 (`r_64`; its `* (1/64)` is elementwise and fuses into its consumer). The subtraction and the square are
 elementwise and fuse into the final `sum()`, which is both a REDUCE and the root, so it is a single
 point (`r_1`). Count materialization points, and remember that a root which is itself a REDUCE counts
 once.
 
-**9.2** `[0]`. The row max is 3, `is_max = [1, 0, 1]`, `where(is_max, 3 - idx, 0) = [3, 0, 1]`, max is 3,
+**2.** `[0]`. The row max is 3, `is_max = [1, 0, 1]`, `where(is_max, 3 - idx, 0) = [3, 0, 1]`, max is 3,
 and `3 * -1 + 3 = 0`. With `idx` instead of `n - idx` the max would pick the *last* maximal index (2), and
 the zero for non-maximal positions would collide with index 0.
 
-**9.3** `std = var.sqrt()`. For cross-entropy:
+**3.** `std = var.sqrt()`. For cross-entropy:
 `(self.logsumexp(-1).reshape(-1) - (self * labels.one_hot(n)).sum(-1)).mean()`. Both match finite
 differences to about `5e-8`. (With the first version of `realize_all`, reading the loss with `.item()`
 before `backward` made this check fail with zero gradients; see the Pitfalls.)

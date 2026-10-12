@@ -6,7 +6,7 @@ those lengths as a brand-new program: a new graph, a new plan, a new trip throug
 system would also keep the keys and values of past tokens in a cache instead of recomputing them, run
 the matrix multiplies in half precision, and spread the work across several devices. None of that is in
 the reference compiler. This chapter is about the distance between what you built and what real systems
-do, measured honestly, with each missing piece turned into a concrete design you can implement as a final
+do, with each missing piece measured and turned into a concrete design you can implement as a final
 project. It ends with a map of the real compilers you are now equipped to read, and with more than twenty
 project ideas.
 
@@ -26,8 +26,8 @@ project ideas.
 **Where this fits:** [Chapter 14](14-gpt.md) trained a GPT and padded its sampling loop to a fixed length
 to dodge recompilation (NOTES 18). This chapter explains why that trick was necessary and what replaces it.
 After this come the appendices: the op reference ([Appendix A](16-appendix-reference.md)), testing and
-debugging ([Appendix B](17-appendix-testing.md)), and the glossary and quiz bank
-([Appendix C](18-appendix-glossary.md)).
+debugging ([Appendix B](17-appendix-testing.md)), the glossary and quiz bank
+([Appendix C](18-appendix-glossary.md)), and the source listing ([Appendix D](19-appendix-source.md)).
 
 > **Labeling convention for this chapter.** Code shown with an `@include` label is in the repository and
 > tested. Code in a plain fenced block marked *scratch* is a small script written for this chapter: it
@@ -35,7 +35,7 @@ debugging ([Appendix B](17-appendix-testing.md)), and the glossary and quiz bank
 > reference laptop (i7-13620H, gcc 15, Python 3.12). Code marked *sketch* is a design proposal and has not
 > been run.
 
-## 15.1 An honest inventory
+## 15.1 An inventory of what is missing
 
 Before designing anything, list what is missing and where in the code the gap shows. Each row is a
 section of this chapter or a project at the end.
@@ -563,7 +563,7 @@ KV-cache position), for its many renderers sharing one C-style base class, and f
 
 **TVM** made the *compute/schedule split* (from Halide) the center of an ML compiler: you describe *what* to
 compute, then apply schedule primitives (`split`, `reorder`, `tile`, `vectorize`, `bind` to GPU threads) that
-change *how* without changing the result. `uopc`'s `Opts` is a tiny schedule language with four primitives.
+change *how* without changing the result. `uopc`'s `Opts` is a tiny schedule language: `upcast`, `thread`, `unroll`, `tile`, and the GPU mapping (`gpu`, `local`).
 TVM's Ansor and MetaSchedule search a much larger space with a learned cost model. It is a much larger version of
 `search_opt`.
 
@@ -675,28 +675,29 @@ compounds.
 
 ## Exercises
 
-1. ★ *(predict the output)* In the scratch program of 15.2, what does `vmin(i * MAXN + j)` become if `LEN`
+1. ★ **Predict the bounds.** In the scratch program of 15.2, what does `vmin(i * MAXN + j)` become if `LEN`
    is replaced by a `CONST 8`? Why?
-2. ★ Generalize the fixed-capacity KV cache of 15.3 to `H` heads by giving `K` and `V` shape
+2. ★ **Multi-head KV cache.** Generalize the fixed-capacity KV cache of 15.3 to `H` heads by giving `K` and `V` shape
    `(H, TMAX, D)`. Check against the numpy reference per head.
-3. ★ Measure the masking waste: time `decode_step` for `TMAX = 64, 256, 1024` at `pos = 3`. Plot time vs
+3. ★ **Masking waste.** Measure the masking waste: time `decode_step` for `TMAX = 64, 256, 1024` at `pos = 3`. Plot time vs
    `TMAX`.
-4. ★★ Implement the relational rule `RANGE r < r.src[0] → True` in a scratch copy of `symbolic.py`, and
+4. ★★ **A relational rule.** Implement the relational rule `RANGE r < r.src[0] → True` in a scratch copy of `symbolic.py`, and
    write a test that `simplify(j < n)` folds for both a `CONST` and a `PARAM` end.
-5. ★★ *(find the bug)* A student adds `Ops.VAR` and makes `_structure_key` include `u.arg` for it, where
+5. ★★ **Find the bug.** A student adds `Ops.VAR` and makes `_structure_key` include `u.arg` for it, where
    `arg = VarArg(name, lo, hi, value)`. Every decode step recompiles. Why, and what is the fix?
-6. ★★ Implement bf16 conversion functions in C (`float bf16_to_f32(unsigned short)` and the reverse with
+6. ★★ **bf16 in C.** Implement bf16 conversion functions in C (`float bf16_to_f32(unsigned short)` and the reverse with
    round-to-nearest-even) and test them exhaustively against numpy on all 65,536 bit patterns.
-7. ★★ Add dynamic loss scaling to a scratch copy of `AdamW`: halve the scale on any non-finite gradient and
+7. ★★ **Loss scaling.** Add dynamic loss scaling to a scratch copy of `AdamW`: halve the scale on any non-finite gradient and
    skip the step; double it after 1,000 clean steps.
-8. ★★ Write tensor parallelism for one linear layer by hand: split `W` by columns into two `Linear`s, run
+8. ★★ **Tensor parallelism.** Write tensor parallelism for one linear layer by hand: split `W` by columns into two `Linear`s, run
    both, concatenate with `Tensor.cat`, and compare against the unsplit layer. Then split by rows and use a
    sum instead.
-9. ★★★ Design the `VAR` op on paper: its `_infer` rule, its `_bounds`, its rendering, and the changes to
+9. ★★★ **Design `VAR`.** Design the `VAR` op on paper: its `_infer` rule, its `_bounds`, its rendering, and the changes to
    `_structure_key` and `realize`. Identify every place in `uopc/` that assumes a shape entry is an `int`
    (hint: grep for `prod(`).
 
-<details markdown="1"><summary>Solutions to the ★ exercises</summary>
+<details>
+<summary>Solutions to ★ exercises</summary>
 
 **1.** With `end = CONST 8`, `_bounds(RANGE) = (0, 7)`, so `i*8 + j` has bounds `(0*8 + 0, 3*8 + 7) = (0, 31)`;
 `vmin` is `0`. Nothing can overflow, so bounds are exact. (This is the static case tested in
@@ -725,7 +726,8 @@ update `K * (1 - here) + here * k`. Scores are `q (H, 1, D) @ K.transpose() (H, 
 7. In data parallelism, what is communicated each step, and with which collective?
 8. Name one thing Triton leaves to the programmer that `uopc`'s kernelizer decides automatically.
 
-<details markdown="1"><summary>Answers</summary>
+<details>
+<summary>Answers</summary>
 
 1. `_structure_key` includes every shape and movement-op argument, and a different length changes them, so
    the graph is structurally new and misses the plan cache.

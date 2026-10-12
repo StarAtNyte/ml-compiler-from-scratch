@@ -7,6 +7,8 @@ Three knobs, all applied while rangeifying (see rangeify.Opts):
           B value 4 times: arithmetic intensity goes from 1/2 to ~2.7 FLOP/load.
   UNROLL  unroll the innermost reduce axis; the loop body becomes a balanced tree.
   THREAD  run the outermost output loop on every core with OpenMP.
+  TILE    split output axes into cache blocks (Opts.tile). Only search_opt tries it: with the layout
+          pass making the reduce axis contiguous, it measured no faster on the reference machine.
 
 `hand_opt` picks them with simple rules. `search_opt` times candidates and keeps
 the fastest (a tiny BEAM search).
@@ -121,6 +123,11 @@ def candidate_opts(body: UOp) -> list[Opts]:
       if all(shape[k] % f == 0 for k, f in up.items()):
         for u in (1, 4) if rsize % 4 == 0 else (1,):
           cands.append(Opts(dict(up), hand_opt_choice(body).thread, u))
+  # cache blocking of the last two output axes (helps when operand rows don't fit in cache)
+  base = hand_opt_choice(body)
+  for t in (32, 64, 128):
+    tile = {a: t for a in outs[-2:] if shape[a] % t == 0}
+    if tile: cands.append(Opts(dict(base.upcast), base.thread, base.unroll, tile=tile))
   return cands
 
 
@@ -134,7 +141,7 @@ def search_opt(body: UOp, out: UOp, inputs: list[np.ndarray] | None = None, reps
   best, best_t = None, float("inf")
   seen = set()
   for o in candidate_opts(body):
-    key = (tuple(sorted(o.upcast.items())), o.thread, o.unroll)
+    key = (tuple(sorted(o.upcast.items())), o.thread, o.unroll, tuple(sorted(o.tile.items())))
     if key in seen: continue
     seen.add(key)
     ast = lower(body, out, Ctx(opts=o))

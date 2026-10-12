@@ -44,7 +44,8 @@ if __name__ == "__main__":
           ("B^T", True, "naive", Opts()),
           ("B^T", True, "threads", Opts(thread=0)),
           ("B^T", True, "4x4 tile", Opts(upcast={0: 4, 1: 4})),
-          ("B^T", True, "4x4 tile + threads", Opts(upcast={0: 4, 1: 4}, thread=0))]
+          ("B^T", True, "4x4 tile + threads", Opts(upcast={0: 4, 1: 4}, thread=0)),
+          ("B^T", True, "+ 64x64 cache blocks", Opts(upcast={0: 4, 1: 4}, thread=0, tile={0: 64, 1: 64}))]
   for layout, transposed, name, o in rows:
     prg = Program(render_c(lower(gemm_graph(N, transposed), out, Ctx(opts=o)), "gemm"), "gemm")
     rhs = bt if transposed else b

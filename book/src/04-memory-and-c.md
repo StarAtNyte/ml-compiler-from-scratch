@@ -836,8 +836,8 @@ load at its position in the linear order.
 9. ★ **Constants.** For each value, predict `cconst(v, dtypes.f32)`: `2.5`, `1e10`, `-float("inf")`,
    `0.30000001192092896`. Why is `repr` safe for the last one?
 
-<details markdown="1">
-<summary>Solutions to the ★ exercises</summary>
+<details>
+<summary>Solutions to ★ exercises</summary>
 
 **1.** `a.index(0).load()` is one node, used by both `+` nodes, but the two `+ 1.0` nodes are *also* the same
 node (same op, same sources), so the multiply's two sources are one node used twice. The C is:
@@ -885,7 +885,7 @@ closer to this float than to any other float, so C's float parser returns exactl
 7. Why is the compiled-kernel cache keyed on the source text and the flags, and not on, say, the UOp graph?
 8. Name two bugs that type-check fine in our IR.
 
-<details markdown="1">
+<details>
 <summary>Answers</summary>
 
 1. Hash consing merges structurally equal nodes, so "load `tmp[0]`" before and after a store would be the

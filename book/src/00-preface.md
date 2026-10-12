@@ -20,9 +20,10 @@ it does all of this, and so will yours:
 - **Week 5:** split programs into kernels, differentiate them automatically, and train an MLP on MNIST.
   The reference run reaches 94.06% test accuracy at 14.4 ms per step on a laptop CPU
   (`book/outputs/mnist.txt`).
-- **Week 6:** make CPU kernels fast. A 1024×1024 matrix multiply goes from 1.9 GFLOP/s to 113.6 GFLOP/s,
-  against 131.6 GFLOP/s for numpy's OpenBLAS (`book/outputs/bench_gemm_1024.txt`). Flash attention,
-  three ways.
+- **Week 6:** make CPU kernels fast. A 1024×1024 matrix multiply goes from 5.2 GFLOP/s (naive loops)
+  to 321.4 GFLOP/s through the Tensor API, against 449.4 GFLOP/s for numpy's OpenBLAS
+  (`book/outputs/bench_gemm_1024.txt`). Laptop numbers vary between runs, so expect yours to differ.
+  Flash attention, three ways.
 - **Week 7–8:** map kernels onto GPUs: blocks, threads, shared memory, tensor cores, rendered as CUDA.
 - **Week 9–10:** train a 112.6k-parameter GPT from scratch at 235 ms per step, and sample from it:
 
@@ -203,7 +204,7 @@ ml-compilers/
 ├── examples/        mnist_mlp.py, gpt.py, flash_attention.py, bench_gemm.py, datasets.py
 ├── book/
 │   ├── SYLLABUS.md  the course spec
-│   ├── src/         this book, one markdown file per chapter, plus diagrams/
+│   ├── src/         this book: 20 markdown files (preface, 15 chapters, appendices A–D), plus diagrams/
 │   ├── outputs/     captured runs quoted in the text (benchmarks, training logs)
 │   └── site/        the built HTML
 └── tools/
@@ -256,8 +257,12 @@ Shakespeare into `~/.cache/uopc/data` the first time you need them.
 
 ### `book/`
 
-The markdown sources are in `book/src/`. Code listings are not copied into the text; they are pulled
-out of the repository when the book is built, so a listing can never drift from the code it shows.
+The markdown sources are in `book/src/`: this preface, 15 chapters and four appendices, 20 files in
+all. Code listings are not copied into the text; they are pulled out of the repository when the book is
+built, so a listing can never drift from the code it shows. The same mechanism produces two places to
+read whole files. Each chapter ends with a collapsed "Full code for this chapter" section holding the
+modules and tests it teaches, and Appendix D (`19-appendix-source.md`) holds the complete source of
+`uopc/`, `tests/` and `examples/`, one collapsed block per file.
 
 ## Conventions
 
@@ -321,6 +326,8 @@ Every chapter after this one has the same skeleton:
 6. **A quiz** in the style of the course's in-person quizzes: short questions that check you understood
    the idea, not that you memorized the code.
 7. **Further reading**: papers, books and source code worth your time.
+8. **Full code for this chapter**: the complete modules and tests the chapter teaches, collapsed. It is
+   generated when the book is built, so it always matches the repository. Appendix D has every file.
 
 ### Three ways to read
 
@@ -353,7 +360,7 @@ say why, not what. Errors are raised where the mistake is made, with a message t
 (`Ops.ADD: dtype mismatch dtypes.i32 vs dtypes.f32 (use CAST)`), never three passes later as a
 `KeyError`.
 
-**Honest about failure.** The file `book/NOTES.md` is a lab notebook of real bugs hit while building
+**Failures on record.** The file `book/NOTES.md` is a lab notebook of real bugs hit while building
 `uopc`: hash-cache collisions between `1` and `1.0`, a linearizer that took four designs, an
 unsimplified index that made attention O(N³), a fusion decision that recomputed a LayerNorm for every
 output column. Each one is told in full in the Pitfalls section of the chapter it belongs to, with
@@ -373,17 +380,18 @@ defines the week-by-week spec that the chapters follow.
 
 ## Warm-up exercises
 
-1. ★ Set up the environment and run the whole test suite. Then run
+1. ★ **Run the tests.** Set up the environment and run the whole test suite. Then run
    `.venv/bin/python -m pytest tests/test_w01_uops.py -v` and read the names of the 12 tests. Which
    chapters do you expect each to belong to?
-2. ★ Run the "first taste" program from this preface with `DEBUG=4` and then `OPT=0 DEBUG=4`. Find
+2. ★ **Read the C.** Run the "first taste" program from this preface with `DEBUG=4` and then `OPT=0 DEBUG=4`. Find
    the two differences in the generated C and explain them in one sentence each.
-3. ★ Change the program to `(x * 2 + 1).relu().sum(0)` (sum over the other axis). Before running it,
+3. ★ **Predict the loops.** Change the program to `(x * 2 + 1).relu().sum(0)` (sum over the other axis). Before running it,
    predict the loop bounds and the index expression into `data0`. Then check.
-4. ★ Run `wc -l uopc/*.py` and draw the import graph of `uopc/` by reading the `import` lines at the
+4. ★ **The import graph.** Run `wc -l uopc/*.py` and draw the import graph of `uopc/` by reading the `import` lines at the
    top of each file. Confirm that it has no cycles.
 
-<details><summary>Hints and solutions</summary>
+<details>
+<summary>Solutions to ★ exercises</summary>
 
 1. Hash consing, type inference and `.uir` belong to Chapter 1; `test_custom_pattern_matcher`,
    `test_run_stack_program` and `test_call_inlining_and_scoping` to Chapter 2; `test_const_fold_semantics`

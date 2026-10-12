@@ -121,11 +121,31 @@ img, svg { max-width: 100%; }
 .prose th { font-weight: 600; background: var(--panel); border-bottom-color: var(--faint); white-space: nowrap; }
 .prose figure.diagram { margin: 2em 0; padding: 18px; background: var(--figure); border: 1px solid var(--rule); border-radius: 12px; overflow-x: auto; }
 .prose figure.diagram svg { display: block; height: auto; margin: 0 auto; }
-.prose details { margin: 1.3em 0; border: 1px solid var(--rule); border-radius: 10px; background: var(--panel); padding: 0 16px; }
-.prose details > summary { cursor: pointer; padding: 12px 0; font: 600 15px var(--font-ui); color: var(--ink); list-style: none; }
-.prose details > summary::before { content: "▸"; display: inline-block; width: 1.1em; color: var(--accent); transition: transform .15s; }
-.prose details[open] > summary::before { transform: rotate(90deg); }
-.prose details[open] { padding-bottom: 8px; }
+/* collapsed blocks: answers, solutions, full code */
+.prose details { margin: 1.4em 0; border: 1px solid var(--rule); border-radius: 10px; background: var(--bg); }
+.prose details > summary { display: flex; align-items: center; gap: 10px; cursor: pointer; list-style: none; padding: 11px 16px;
+  font: 600 15px/1.4 var(--font-ui); color: var(--ink); border-radius: 10px; }
+.prose details > summary::-webkit-details-marker { display: none; }
+.prose details > summary::before { content: ""; flex: none; width: 7px; height: 7px; margin-left: 2px; border-right: 2px solid var(--muted);
+  border-bottom: 2px solid var(--muted); transform: rotate(-45deg); transition: transform .15s; }
+.prose details[open] > summary::before { transform: rotate(45deg); }
+.prose details > summary:hover { background: var(--panel); }
+.prose details[open] > summary { border-bottom: 1px solid var(--rule); border-radius: 10px 10px 0 0; }
+.prose details > summary::after { margin-left: auto; font: 500 11px var(--font-ui); letter-spacing: 0.06em; text-transform: uppercase; color: var(--faint); }
+.prose details.answers > summary::after { content: "Show answers"; }
+.prose details.solutions > summary::after { content: "Show solutions"; }
+.prose details.fullcode > summary::after { content: "Show file"; }
+.prose details[open] > summary::after { content: "Hide"; }
+.prose details.answers, .prose details.solutions { border-left: 3px solid var(--accent); }
+.prose details.fullcode { margin: 0.6em 0; }
+.prose details.fullcode > summary { font: 500 13.5px var(--font-mono); padding: 9px 16px; }
+.details-body { padding: 4px 20px 8px; font-size: 0.96em; }
+.details-body > :first-child { margin-top: 0.8em; }
+.details-body ol, .details-body ul { padding-left: 1.3em; }
+.prose details.fullcode .details-body { padding: 0 10px 2px; }
+.prose details.fullcode .listing { display: none; }
+.prose details.fullcode .codehilite { margin: 10px 0; border-radius: 8px; }
+.prose details.fullcode .codehilite pre { max-height: 70vh; overflow: auto; }
 
 /* footer of a chapter */
 .page-foot { max-width: 72ch; margin: 3em auto 0; font-size: 14px; }
@@ -253,6 +273,10 @@ img, svg { max-width: 100%; }
   .copy-btn, .anchor { display: none !important; }
   figure.diagram, .codehilite, table { break-inside: avoid; }
   .prose h2, .prose h3 { break-after: avoid; }
-  .prose details { border: 0; padding: 0; background: none; }
+  .prose details { border: 0; background: none; }
+  .prose details > summary::before, .prose details > summary::after { display: none; }
+  .prose details > summary { padding: 0; border: 0; }
+  .details-body { padding: 0; }
+  .prose details.fullcode .codehilite pre { max-height: none; }
   .listing a { white-space: normal; }
 }

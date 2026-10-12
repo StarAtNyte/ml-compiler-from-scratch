@@ -841,8 +841,8 @@ often still gives the right answer, because `max` is idempotent. Test reductions
    targets of both users and their longest common prefix, and predict where `float acc0;` is declared. Then
    make `i` a `THREAD` axis and check the C.
 
-<details markdown="1">
-<summary>Solutions to the ★ exercises</summary>
+<details>
+<summary>Solutions to ★ exercises</summary>
 
 **1.**
 
@@ -888,7 +888,7 @@ has exactly this shape, with `data0` playing all three roles.
 7. What happens if you write `range_(8, 0)` for two loops that should be siblings?
 8. Why can't the linearizer hoist `X[j]` out of the `i` loop in section 5.8's kernel?
 
-<details markdown="1">
+<details>
 <summary>Answers</summary>
 
 1. `{i, j}`: `END` removes the ranges it closes.

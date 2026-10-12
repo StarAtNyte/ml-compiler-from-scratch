@@ -25,7 +25,7 @@ one of its rules.
 ops `PAD` and `sum_to` from `uopc/composite.py` (Chapter 6). [Chapter 9](09-tensor-mnist.md)
 builds a training loop on top of `backward`, and [Chapter 14](14-gpt.md) trains a GPT with it.
 
-## Three ways to get a derivative
+## 8.1 Three ways to get a derivative
 
 Take `f(x) = sum(x * y + x)` for vectors `x` and `y`. There are three ways to get `df/dx`.
 
@@ -46,7 +46,7 @@ Its result is exact up to floating-point rounding, and its cost is a constant mu
 of `f`. Because UOp graphs are hash consed, our "symbolic" output graph never duplicates a shared
 subexpression either: AD on a DAG gets the benefits of both.
 
-## Forward mode and reverse mode
+## 8.2 Forward mode and reverse mode
 
 Think of the program as a composition of functions,
 `f = f_3 . f_2 . f_1`, with `x -> h1 -> h2 -> L`. The chain rule says its Jacobian is a product of
@@ -79,7 +79,7 @@ decides whether that node becomes a buffer (Chapter 7).
 > each intermediate value, from the output back to the inputs. Each op only needs to know how to turn
 > the sensitivity of its output into sensitivities of its inputs: a vector-Jacobian product.
 
-## The chain rule on a DAG
+## 8.3 The chain rule on a DAG
 
 Programs are not chains; they are DAGs. In `x * y + x`, `x` is used twice. The multivariate chain
 rule handles fan-out: if `L` depends on `x` through several uses `u_1, ..., u_k`, then
@@ -108,7 +108,7 @@ result:    dL/dx = 1 + y ,  dL/dy = x
 
 @diagram 08-reverse-mode
 
-## Why only pure shape graphs
+## 8.4 Why only pure shape graphs
 
 The syllabus says autodiff works "only on pure shape graphs (not STORE, CALL, AFTER, RANGE,
 END)". The reasons are worth spelling out.
@@ -127,7 +127,7 @@ the same ops. That is why autodiff runs *before* rangeify: after rangeify, the g
 loops and stores. This placement is the same as in JAX (which differentiates `jaxpr`s, a pure
 array IR, before XLA lowers them) and tinygrad.
 
-## gradient(): the algorithm
+## 8.5 gradient(): the algorithm
 
 Here is the whole driver:
 
@@ -193,7 +193,7 @@ at most once. [Chapter 7](07-kernelize.md) showed it on a training step: the for
 kernel whose output is read by both the loss kernel and the gradient kernel. No "saved tensors"
 machinery is needed; hash consing is the tape.
 
-## The rules
+## 8.6 The rules
 
 Every rule maps `(u, g)`, a node and the gradient of the loss with respect to it (same shape as
 `u`), to one gradient per source (same shape as that source), or `None`.
@@ -433,7 +433,7 @@ grad with detach:    [1. 2.]
 Anything else (`STORE`, `RANGE`, ...) raises
 `NotImplementedError("no gradient rule for ... (autodiff only works on pure shape graphs)")`.
 
-## Worked examples: the gradients you will actually train with
+## 8.7 Worked examples: the gradients you will actually train with
 
 The rules are local. It is worth checking, twice, that composing them gives the textbook formulas
 for the two gradients that dominate every training run.
@@ -501,7 +501,7 @@ Equal to the last float32 digit or so. The max's contribution is present in the 
 simplified away) and sums to zero numerically, which is the "mathematically zero" gradient through
 the max mentioned above.
 
-## From gradient() to Tensor.backward
+## 8.8 From gradient() to Tensor.backward
 
 The Tensor library's `backward` is a loop over `gradient`'s results:
 
@@ -534,7 +534,7 @@ produced, so the forward work the gradients need is computed again when they are
 same plan as the updates, so it is still one realization per step). Realizing loss and gradients
 together, as the optimizers do, avoids the repeat.
 
-## Gradient checking
+## 8.9 Gradient checking
 
 Every rule above is one line, which means every rule is one typo away from a plausible wrong
 answer. The oracle is numerical differentiation with **central differences**:
@@ -581,7 +581,7 @@ Gradient checks should avoid kinks: a finite difference across `max(a, b)` at `a
 two one-sided slopes and agrees with the tie rule only by coincidence. Random float inputs avoid
 exact ties with probability 1.
 
-## Higher-order derivatives
+## 8.10 Higher-order derivatives
 
 `gradient` takes a graph and returns a graph. Nothing stops you from differentiating its output:
 
@@ -614,7 +614,7 @@ gradient graph is differentiable again. Systems with a hand-written backward ker
 many early frameworks) have to provide a second set of rules for double backward; graph-to-graph AD
 gets it for free.
 
-## What gradients cost
+## 8.11 What gradients cost
 
 A rule of thumb: the backward pass costs about twice the forward. Each `MUL` in the forward becomes
 two in the backward (one per source). Each matmul (an `EXPAND`-`MUL`-`REDUCE`) becomes two matmuls in
@@ -634,7 +634,7 @@ ended up inside the inner loop of the weight-gradient matmul:
 (`0.0031250000465661287` is `1/320` rounded to float32 by the constant folder, NOTES 5; the forward
 kernel printed the same constant as `0.003125f`.) Making this fast is the subject of Part IV.
 
-## Building it yourself: an order of work
+## 8.12 Building it yourself: an order of work
 
 1. Write `gradient` with only `ADD`, `MUL` and the leaves, and test `sum(x * y + x)` against the
    hand-derived `1 + y` and `x`. Include a function that uses an input twice.
@@ -725,8 +725,8 @@ and `backward` uses it; `test_item_before_backward_and_detach` pins the behavior
    that makes the gradient of a data-dependent `INDEX` possible, give its type rule and its rangeify
    rule, and explain why it needs either atomics or a reduction over the index axis.
 
-<details markdown="1">
-<summary>Solutions to the ★ exercises</summary>
+<details>
+<summary>Solutions to ★ exercises</summary>
 
 **1.** `d/dx (2^x x) = 2^x ln2 x + 2^x = 2^x (x ln 2 + 1)`. At `x = [0, 1, 2]`:
 `[1, 2(ln 2 + 1), 4(2 ln 2 + 1)] = [1, 3.386, 9.545]`. In the graph, `MUL` sends `g * x` to the `EXP2`
@@ -751,7 +751,7 @@ be, since every element of `x` contributes once to the total sum.
 7. Why can `gradient` be applied to its own output?
 8. Why is the gradient of a data-dependent `INDEX` not supported, and what is the workaround?
 
-<details markdown="1">
+<details>
 <summary>Answers</summary>
 
 1. The loss is one scalar and the parameters are many. Reverse mode gets the whole gradient (one row

@@ -36,7 +36,7 @@ kernels; in [Chapter 10](10-cpu-performance.md) the `Opts` that `lower()` accept
 > and the `floordiv_i32`/`floormod_i32` helpers from [Chapter 4](04-memory-and-c.md)); it is
 > omitted from the listings to save space. Everything else is verbatim.
 
-## Shapes are functions, not memory
+## 6.1 Shapes are functions, not memory
 
 Start with the question every array library has to answer: *what is a tensor?* The obvious answer
 is "a block of memory plus a shape". A `float[12]` buffer with shape `(3, 4)` stores element
@@ -72,7 +72,7 @@ then has to clean up.
 > ending at buffers and constants. Lowering it to loops is the act of evaluating that composition
 > symbolically, for a symbolic index made of loop counters.
 
-## The four movement ops
+## 6.2 The four movement ops
 
 `uopc` has exactly four primitive movement ops. Each has an argument (`arg`), a type rule that
 computes its output shape from its input shape, and an index map. Here are the type rules, straight
@@ -135,7 +135,7 @@ shrink(x, arg)[idx] = x[i0 + b0, i1 + b1, ...]
 `SHRINK` is slicing with step 1. There is no strided slice primitive; `Tensor._stride2d` in
 [Chapter 9](09-tensor-mnist.md) builds `x[::2]` from `PAD`, `RESHAPE` and `SHRINK`.
 
-## Broadcasting is EXPAND plus RESHAPE
+## 6.3 Broadcasting is EXPAND plus RESHAPE
 
 NumPy's broadcasting rule: align shapes on the right, prepend 1s to the shorter one, and on every
 axis the sizes must be equal or one of them must be 1; the result takes the larger size. In
@@ -149,7 +149,7 @@ the ALU type rule demands identical shapes (`ADD: shape mismatch (3, 4) vs () (b
 EXPAND)`), every broadcast is explicit in the graph. That is a feature: rangeify never has to think
 about broadcasting, only about `EXPAND`.
 
-## REDUCE: pop the last n axes
+## 6.4 REDUCE: pop the last n axes
 
 `x.reduce(op, n)` combines the last `n` axes with `op` (`ADD` or `MAX`) and removes them. Shape
 `(2, 3, 4)` reduced with `n = 2` becomes `(2,)`; with `n = 0` it is the identity; with
@@ -170,7 +170,7 @@ smallest representable value for `MAX` (`-inf` for floats, `INT_MIN` for `i32`).
 
 @include uopc/rangeify.py#identity
 
-## STACK, generalized
+## 6.5 STACK, generalized
 
 In week 1, `STACK` could only stack constants (so the const folder could run programs). Now it can
 stack any same-shaped, same-dtype values: `STACK(a, b, c)` has shape `(3, *a.shape)`, and
@@ -178,7 +178,7 @@ element `[k, *rest]` is element `rest` of the `k`-th source. `INDEX(x, i)` is it
 the leading axis by selecting entry `i`. Together they make the IR able to build tensors out of
 pieces, which is how `PAD` will be built below.
 
-## Rangeify: computing one element
+## 6.6 Rangeify: computing one element
 
 Now the main event. We have a shaped graph and want a loop program. The idea is to stop thinking
 about whole tensors and ask a much smaller question:
@@ -305,10 +305,10 @@ exact dictionary key. Hash consing also gives free common-subexpression eliminat
 *output*: two paths that compute `LOAD(INDEX(buf0, i*4 + j))` produce one node, which the
 renderer emits once.
 
-The memo is keyed on the index too, not just the node. The same node evaluated at two different
+The memo is keyed on the index as well as the node. The same node evaluated at two different
 indices (say `y[i]` and `y[i+1]`) is two different scalar computations.
 
-## Lowering REDUCE: accumulators and loops
+## 6.7 Lowering REDUCE: accumulators and loops
 
 Every other op maps an index to an index. `REDUCE` is different: element `idx` of
 `x.reduce(ADD, n)` is a *sum over* all values of the popped axes. In loop language that is a new
@@ -484,7 +484,7 @@ void neighbors(float* restrict data0, float* restrict data1) {
 Two accumulators, one loop. Both copies `END` the same `RANGE`; `merge_ends` (below) merges those
 two `END`s into one.
 
-## lower(): from a shaped root to a SINK
+## 6.8 lower(): from a shaped root to a SINK
 
 `rangeify` answers "the value at `idx`". `lower` wraps it into a complete program: create the
 output loops, ask for the root's value, store it into the output buffer at the raveled index, close
@@ -514,7 +514,7 @@ The test helper that every week-4 test uses is `lower` plus the runtime:
 
 @include tests/helpers.py#run_shaped
 
-## Index simplification at RESHAPE
+## 6.9 Index simplification at RESHAPE
 
 Look again at the `RESHAPE` branch of `rangeify`:
 
@@ -589,9 +589,9 @@ The same mistake in the real compiler made fused attention at N=512 take 1787 ms
 
 > **Key idea:** in a compiler, *syntactic* facts (which variables an expression mentions) drive
 > structural decisions (which loop a computation lives in). Keep expressions in normal form at the
-> moment you inspect them, not just at the end.
+> moment you inspect them, not only at the end.
 
-## GEMM from movement ops
+## 6.10 GEMM from movement ops
 
 Now the payoff: matrix multiplication, written without a single loop. Start from the math,
 
@@ -639,7 +639,7 @@ void gemm(float* restrict data0, float* restrict data1, float* restrict data2) {
 ```
 
 Two loads per multiply-add, and `B` is read down a column (stride 4). That stride is a performance
-disaster at N=1024 (1.9 GFLOP/s, NOTES 19), and fixing it is [Chapter 10](10-cpu-performance.md)'s
+disaster at N=1024 (about 2–5 GFLOP/s depending on the run, NOTES 19), and fixing it is [Chapter 10](10-cpu-performance.md)'s
 job. Correctness first.
 
 The Tensor library's `matmul` is the same construction with the reduction axis last
@@ -703,7 +703,7 @@ of `uopc/uir.py` uses `(256, 1, 256)` and `(1, 256, 256)` without the transpose,
 `A @ B^T`, a perfectly good GEMM if `B` is stored transposed.) The lesson generalizes: write the
 index map down. "Reshape and multiply" looks right whatever the axes are.
 
-## Convolution from movement ops
+## 6.11 Convolution from movement ops
 
 A 1D valid convolution (strictly, a cross-correlation, which is what ML frameworks call
 convolution) with a length-`K` kernel:
@@ -749,7 +749,7 @@ The `STACK` became a `WHERE` chain selecting among three loads, all hoisted out 
 `np.convolve(x, w[::-1], "valid")`. `Tensor.conv2d` ([Chapter 9](09-tensor-mnist.md)) is the 2D
 version: `KH*KW` shrinks, a `STACK`, a permute, and a matmul.
 
-## Composite ops: PAD and FLIP
+## 6.12 Composite ops: PAD and FLIP
 
 The syllabus says PAD and FLIP are *composite*: not primitives, but built from the primitives.
 That is a design choice worth arguing about. tinygrad has both as primitive movement ops, because a
@@ -881,7 +881,7 @@ The week-4 tests check `PAD` and `FLIP` against NumPy, including padding larger 
 
 @include tests/test_w04_rangeify.py#test_pad_flip_composites
 
-## Testing rangeify: random movement chains
+## 6.13 Testing rangeify: random movement chains
 
 Every rule of rangeify is a few characters long, which means a typo in any of them produces
 plausible but wrong indices. Hand-written tests catch the cases you thought of. The best test in
@@ -995,8 +995,8 @@ the load must be guarded, or you read `data0[-1]`. C will not tell you.
     the loop is still correct. Then find a case where sharing would be wrong if the cache were
     keyed on the node alone.
 
-<details markdown="1">
-<summary>Solutions to the ★ exercises</summary>
+<details>
+<summary>Solutions to ★ exercises</summary>
 
 **1.** `reshape` ravels `r` in shape `(12,)` (just `r`) and unravels it in the transposed shape
 `(4, 3)`: `(r // 3, r % 3)`. `PERMUTE (1, 0)` swaps them: `(r % 3, r // 3)` in `x`'s shape `(3, 4)`.
@@ -1028,7 +1028,7 @@ void flat_t(float* restrict data0, float* restrict data1) {
 7. What does the syllabus's `gemm_256x256.uir` compute?
 8. Why is the unconditional load in the composite `PAD` safe?
 
-<details markdown="1">
+<details>
 <summary>Answers</summary>
 
 1. Its type rule requires equal rank, and each axis keeps its size or grows from 1. Insert the axis

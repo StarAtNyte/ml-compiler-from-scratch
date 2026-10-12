@@ -480,7 +480,7 @@ The first rule distributes a constant over a sum: `(a+b)*c -> a*c + b*c`. Usuall
 expressions *bigger*, so why do it? Because the division and modulo rules below look at the individual
 terms of a sum. `((x+y)*4) // 4` can only be seen as "a multiple of 4, divided by 4" after the product is
 spread over the terms. Development note 14 records the cost of not having this rule: GPT attention kernels
-kept chains like `((x/4096)%4)` in their inner loops.
+kept chains like `((x/4096)%4)` in their inner loops (see [Chapter 6](06-rangeify.md), Pitfalls).
 
 The second rule floats a constant out of a sum, `(x+c) + y -> (x+y) + c`, so that the constant reaches the
 outermost addition, where it can meet another constant. The last two collect like terms:
@@ -658,7 +658,7 @@ row of (4,6) (((((i*3)+j)*4)+k)//6)         -> ((i*2)+(((j*4)+k)//6))
 col of (4,6) (((((i*3)+j)*4)+k)%6)          -> (((j*4)+k)%6)
 ```
 
-The digits come back exactly. The reshape gives the honest answer, `i*2 + (j*4+k)//6` for the row and
+The digits come back exactly. The reshape gives the exact answer, `i*2 + (j*4+k)//6` for the row and
 `(j*4+k)%6` for the column, which no rule should simplify further since `j*4+k` really does straddle
 rows of 6.
 
@@ -825,12 +825,10 @@ same structure (folding, bounds, div/mod rules, a `_min_max` per node) and many 
 
 The chain from this chapter to performance is direct. [Chapter 6](06-rangeify.md) lowers movement ops by
 pushing index expressions through them. A `RESHAPE` from `(N, N)` to `(N*N,)` and back produces
-`((i*N + j)//N) % N` for the row, which is `i` after `simplify`, but syntactically it mentions `j`. The reduce
-lowering places an accumulator in the loops its index *mentions*. With the raw index, the max and sum
-reductions of fused attention were nested inside the `j` loop, making an O(N<sup>2</sup>) computation
-O(N<sup>3</sup>). Simplifying indices at every reshape took fused attention at N=512 from 1787 ms to 7 ms.
-That is development note 12, told in full in [Chapter 6](06-rangeify.md) and
-[Chapter 11](11-fusion-flash.md).
+`((i*N + j)//N) % N` for the row, which is `i` after `simplify`, but syntactically it mentions `j`, and the
+reduce lowering places an accumulator in the loops its index *mentions*. Without simplification, fused
+attention at N=512 took 1787 ms instead of 7 ms (development note 12; see [Chapter 6](06-rangeify.md),
+Pitfalls, and [Chapter 11](11-fusion-flash.md)).
 
 > **Key idea:** a simplifier is not about pretty output. It decides what an expression *depends on*, and
 > dependencies decide loop structure. One wrong dependency can cost a factor of N.
@@ -962,8 +960,8 @@ type, also match on `dtype`.
     `(Ops.RECIP, f32, [0.0])`, `(Ops.LOG2, f32, [0.0])`, `(Ops.SQRT, f32, [-1.0])`,
     `(Ops.CAST, bool, [0.5])`, `(Ops.FLOORMOD, i32, [7, -2])`.
 
-<details markdown="1">
-<summary>Solutions to the ★ exercises</summary>
+<details>
+<summary>Solutions to ★ exercises</summary>
 
 **1.** (a) `(x*3)+2`: both terms are divisible by 2. (b) `(x//4)%3`, the middle digit rule.
 (c) `((i*8)+j)//2` becomes `(i*4)+(j//2)`, then `% 4` keeps the remainder of the sum mod 4. `i*4` is a
@@ -1001,7 +999,7 @@ divisor: `7 = -4*-2 + -1`).
 7. `simplify` caches results in a dict keyed by node. What property of UOps makes this correct?
 8. Name two places outside `symbolic.py` where `vmin`/`vmax` change what code the compiler emits.
 
-<details markdown="1">
+<details>
 <summary>Answers</summary>
 
 1. Casting a non-finite float to int is undefined behavior in C. Any fixed value would make the folded

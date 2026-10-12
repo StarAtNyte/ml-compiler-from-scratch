@@ -1122,6 +1122,7 @@ The knobs that choose those kinds are a small dataclass, filled in by `opt.hand_
 | `upcast` | output axis → factor | a register tile: `factor` accumulators sharing one reduce loop (`merge_ends`) |
 | `thread` | one output axis | that axis becomes the outermost loop, kind THREAD (OpenMP) |
 | `unroll` | factor for the innermost reduce axis | the reduce body is replicated and combined as a balanced tree |
+| `tile` | output axis → cache block size | that axis is split into a block loop (outside) and a loop within the block, so a block of outputs reuses operand data while it is in cache; the size must divide the axis and be a multiple of its upcast |
 | `gpu` | bool | output axes become GLOBAL ranges |
 | `local` | output axis → threads per block | splits that axis into GLOBAL × LOCAL ranges |
 
@@ -1148,7 +1149,7 @@ for o in [Opts(thread=0, upcast={0: 2}, unroll=4), Opts(gpu=True, local={0: 4})]
 ```
 
 ```text
-# Opts(upcast={0: 2}, thread=0, unroll=4, gpu=False, local={})
+# Opts(upcast={0: 2}, thread=0, unroll=4, tile={}, gpu=False, local={})
 void kernel(float* restrict data0, float* restrict data1) {
   #pragma omp parallel for
   for (int ridx0 = 0; ridx0 < 4; ridx0++) {
@@ -1182,7 +1183,7 @@ void kernel(float* restrict data0, float* restrict data1) {
   }
 }
 
-# Opts(upcast={}, thread=None, unroll=1, gpu=True, local={0: 4})
+# Opts(upcast={}, thread=None, unroll=1, tile={}, gpu=True, local={0: 4})
 extern "C" __global__ void __launch_bounds__(4) kernel(float* __restrict__ data0, float* __restrict__ data1) {
   int gidx0 = blockIdx.x; /* 2 */
   int lidx0 = threadIdx.x; /* 4 */

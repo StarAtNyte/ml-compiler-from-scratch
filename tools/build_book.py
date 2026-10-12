@@ -10,6 +10,7 @@ Directives in the markdown (each on its own line):
   @include path:10-40             lines 10..40
   @include path#name              a top-level function/class/variable, or Class.method (extracted with ast)
   @diagram name                   inline book/src/diagrams/name.svg
+  @source a.py b.py ...           whole files, each in a collapsed block (Appendix D)
 
   python tools/build_book.py          # site
   python tools/build_book.py --pdf    # also book/site/book.pdf (needs google-chrome or chromium)
@@ -17,7 +18,7 @@ Directives in the markdown (each on its own line):
 Set REPO_URL to change where "view source" links point.
 """
 from __future__ import annotations
-import ast, html, json, os, re, sys
+import ast, html, json, os, re, sys, textwrap
 from pathlib import Path
 import markdown
 
@@ -30,7 +31,26 @@ REPO = os.environ.get("REPO_URL", "https://github.com/StarAtNyte/ml-compiler-fro
 # chapter number -> course week
 WEEKS = {"00": "", "01": "Week 1", "02": "Week 1", "03": "Week 1", "04": "Week 2", "05": "Week 3", "06": "Week 4",
          "07": "Week 5", "08": "Week 5", "09": "Week 5", "10": "Week 6", "11": "Week 6", "12": "Week 7",
-         "13": "Week 8", "14": "Weeks 9–10", "15": "Weeks 9–14", "16": "Appendix A", "17": "Appendix B", "18": "Appendix C"}
+         "13": "Week 8", "14": "Weeks 9–10", "15": "Weeks 9–14", "16": "Appendix A", "17": "Appendix B", "18": "Appendix C",
+         "19": "Appendix D"}
+
+# files each chapter teaches: shown, collapsed, at the end of the chapter ("Full code for this chapter")
+CHAPTER_CODE = {
+  "01": ["uopc/uop.py", "uopc/dtype.py", "uopc/uir.py", "tests/test_w01_uops.py"],
+  "02": ["uopc/rewrite.py", "uopc/symbolic.py", "tests/test_w01_uops.py"],
+  "03": ["uopc/symbolic.py", "tests/test_w01_uops.py"],
+  "04": ["uopc/render_c.py", "uopc/runtime.py", "tests/test_w02_render.py", "tests/helpers.py"],
+  "05": ["uopc/linearize.py", "tests/test_w03_loops.py"],
+  "06": ["uopc/rangeify.py", "uopc/composite.py", "tests/test_w04_rangeify.py"],
+  "07": ["uopc/kernelize.py", "tests/test_w05_tensor.py"],
+  "08": ["uopc/autodiff.py", "tests/test_w05_tensor.py"],
+  "09": ["uopc/tensor.py", "uopc/nn.py", "examples/mnist_mlp.py", "examples/datasets.py"],
+  "10": ["uopc/opt.py", "examples/bench_gemm.py", "tests/test_w06_opt.py"],
+  "11": ["examples/flash_attention.py"],
+  "12": ["uopc/gpu.py", "uopc/cuda.py", "tests/test_w07_gpu.py"],
+  "13": ["uopc/gpu.py"],
+  "14": ["examples/gpt.py", "tests/test_w09_models.py"],
+}
 
 
 # ---------------------------------------------------------------------------
@@ -55,12 +75,56 @@ def extract(path: Path, sel: str | None) -> tuple[str, str, int, int]:
   return "\n".join(lines[start - 1:node.end_lineno]), f"{rel} · {sel}", start, node.end_lineno
 
 
+def make_md() -> markdown.Markdown:
+  return markdown.Markdown(extensions=["fenced_code", "codehilite", "tables", "toc", "attr_list", "md_in_html"],
+                           extension_configs={"codehilite": {"guess_lang": False}, "toc": {"toc_depth": "2-3"}})
+
+
+DETAILS = re.compile(r'<details[^>]*>\s*(?:<summary>(.*?)</summary>)?(.*?)</details>', re.S)
+
+def stash_details(md: str) -> tuple[str, dict[str, str]]:
+  """Python-Markdown leaves raw HTML blocks alone, so markdown inside <details> came out as literal ** and `.
+  Render each block's body ourselves and put a placeholder paragraph in its place."""
+  out: dict[str, str] = {}
+  def repl(m):
+    summary, body = (m.group(1) or "Details").strip(), m.group(2)
+    low = summary.lower()
+    kind = "fullcode" if "lines" in low and "·" in summary else "answers" if "answer" in low else "solutions" if ("solution" in low or "hint" in low) else "more"
+    sub = make_md()
+    inner = sub.convert(textwrap.dedent(body).strip("\n"))
+    summ = re.sub(r"^<p>|</p>$", "", sub.reset().convert(summary))
+    key = f"DETAILSBLOCK{len(out)}X"
+    out[key] = f'<details class="{kind}"><summary>{summ}</summary><div class="details-body">{inner}</div></details>'
+    return f"\n\n{key}\n\n"
+  return DETAILS.sub(repl, md), out
+
+
+def unstash(html_: str, blocks: dict[str, str]) -> str:
+  for k, v in blocks.items(): html_ = html_.replace(f"<p>{k}</p>", v).replace(k, v)
+  return html_
+
+
+def code_section(files: list[str], heading: str) -> str:
+  parts = [f"\n\n## {heading}\n",
+           "Every file this chapter builds, exactly as it is in the repository. Click a file to expand it.\n"]
+  for f in files:
+    n = len((ROOT / f).read_text().splitlines())
+    parts.append(f"<details><summary>{f} · {n} lines</summary>\n\n@include {f}\n\n</details>\n")
+  return "\n".join(parts)
+
+
 def preprocess(md: str, errors: list[str]) -> str:
   out = []
   for line in md.splitlines():
     m = re.fullmatch(r"@include\s+([^\s:#]+)(?:[:#](\S+))?\s*", line)
     d = re.fullmatch(r"@diagram\s+(\S+)\s*", line)
-    if m:
+    src = re.fullmatch(r"@source\s+(.+)", line)
+    if src:   # several whole files, each collapsed
+      for f in src.group(1).split():
+        try: n = len((ROOT / f).read_text().splitlines())
+        except OSError as e: errors.append(f"{line}: {e}"); continue
+        out += ["", f"<details><summary>{f} · {n} lines</summary>", "", *preprocess(f"@include {f}", errors).splitlines(), "", "</details>", ""]
+    elif m:
       path = ROOT / m.group(1)
       try: code, label, a, b = extract(path, m.group(2))
       except Exception as e:
@@ -129,8 +193,8 @@ def sidebar(meta, part_at, cur: str | None) -> str:
   items = []
   for stem, t, _ in meta:
     if stem[:2] in part_at: items.append(f'<div class="nav-part">{html.escape(part_at[stem[:2]])}</div>')
-    num = "" if stem[:2] == "00" else (stem[:2].lstrip("0") if int(stem[:2]) < 16 else "ABC"[int(stem[:2]) - 16])
-    label = re.sub(r"^(\d+\.|Appendix [A-C][:.])\s*", "", t).replace("`", "")
+    num = "" if stem[:2] == "00" else (stem[:2].lstrip("0") if int(stem[:2]) < 16 else "ABCD"[int(stem[:2]) - 16])
+    label = re.sub(r"^(\d+\.|Appendix [A-D][:.])\s*", "", t).replace("`", "")
     items.append(f'<a href="{stem}.html"{" class=cur aria-current=page" if stem == cur else ""}>'
                  f'<span class="nav-num">{num}</span><span>{html.escape(label)}</span></a>')
   return f'<aside class="sidebar" id="sidebar"><nav aria-label="Chapters">{"".join(items)}</nav></aside>'
@@ -238,11 +302,11 @@ def landing(meta, part_at, stats) -> str:
     name = g["name"]
     head_, _, sub = name.partition(": ")
     lis = "".join(f'<li><a href="{s}.html"{"" if WEEKS.get(s[:2]) else " class=nolw"}>{f"<span class=lw>{WEEKS[s[:2]]}</span>" if WEEKS.get(s[:2]) else ""}'
-                  f'{html.escape(re.sub(r"^(\d+\.|Appendix [A-C][:.])\s*", "", t).replace("`", ""))}</a></li>' for s, t, _ in g["items"])
+                  f'{html.escape(re.sub(r"^(\d+\.|Appendix [A-D][:.])\s*", "", t).replace("`", ""))}</a></li>' for s, t, _ in g["items"])
     cards.append(f'<section class="part-card"><div class="part-head"><span>{html.escape(head_)}</span>'
                  f'{f"<h3>{html.escape(sub)}</h3>" if sub else ""}</div><ol>{lis}</ol></section>')
   results = [("MNIST, week 5", "94%", "test accuracy, 15 ms per step"),
-             ("GEMM 1024³, week 6", "114", "GFLOP/s, from 1.9 naive (numpy: 132)"),
+             ("GEMM 1024³, week 6", "321", "GFLOP/s, from 5 naive (numpy: 449)"),
              ("Flash attention, week 6", "3 ways", "unfused, fused, online softmax"),
              ("GPT, weeks 9–10", "2.11", "val loss on Tiny Shakespeare, from 3.83")]
   res = "".join(f'<div class="result"><div class="r-label">{a}</div><div class="r-num">{b}</div><div class="r-note">{c_}</div></div>'
@@ -288,13 +352,20 @@ python -m venv .venv &amp;&amp; .venv/bin/pip install -e ".[dev]"
 </main><script src="assets/app.js" defer></script></body></html>"""
 
 
+def for_print(stem: str, body: str) -> str:
+  """On paper nothing can be clicked open: expand answers and solutions. Per-chapter code stays collapsed
+  (it would repeat), except in Appendix D, which is where the printed book carries the full source."""
+  body = re.sub(r'<details class="(answers|solutions|more)">', r'<details class="\1" open>', body)
+  if stem.startswith("19"): body = body.replace('<details class="fullcode">', '<details class="fullcode" open>')
+  return body
+
+
 def single_page(meta, bodies) -> str:
   """Every chapter on one page, for printing to PDF: a cover, then chapters, no app chrome."""
   cover = (f'<section class="cover"><div class="kicker">Course notes for a 14-week compiler course</div><h1>{TITLE}</h1>'
            f'<p>A graph IR, rewriting, code generation, kernel fusion, autodiff, GPUs, and training a GPT.</p><p class="cover-url">{REPO}</p></section>')
   toc = "".join(f'<li><a href="#{s}">{html.escape(t)}</a></li>' for s, t, _ in meta)
-  # answers and solutions are collapsed <details> on the web; open them for paper
-  chs = "".join(f'<section id="{s}" class="chapter-break"><article class="prose">{b.replace("<details>", "<details open>")}</article></section>'
+  chs = "".join(f'<section id="{s}" class="chapter-break"><article class="prose">{for_print(s, b)}</article></section>'
                 for (s, _, _), b in zip(meta, bodies))
   return f"""{head(TITLE, TITLE)}<body class="print-book"><main class="print-main">{cover}
 <section class="print-toc chapter-break"><h2>Contents</h2><ol>{toc}</ol></section>{chs}</main></body></html>"""
@@ -302,16 +373,17 @@ def single_page(meta, bodies) -> str:
 
 def build() -> int:
   (OUT / "assets").mkdir(parents=True, exist_ok=True)
-  conv = markdown.Markdown(extensions=["fenced_code", "codehilite", "tables", "toc", "attr_list", "md_in_html"],
-                           extension_configs={"codehilite": {"guess_lang": False}, "toc": {"toc_depth": "2-3"}})
+  conv = make_md()
   errors: list[str] = []
   part_at = {l.split("|")[0].strip(): l.split("|")[1].strip()
              for l in (SRC / "PARTS.txt").read_text().splitlines() if "|" in l}
   meta, bodies, tokens = [], [], []
   for p in chapters():
     md = p.read_text()
+    if p.stem[:2] in CHAPTER_CODE: md += code_section(CHAPTER_CODE[p.stem[:2]], "Full code for this chapter")
     conv.reset()
-    body = conv.convert(preprocess(md, errors))
+    text, blocks = stash_details(preprocess(md, errors))
+    body = unstash(conv.convert(text), blocks)
     body = re.sub(r'href="(\d\d-[\w-]+)\.md(#[^"]*)?"', r'href="\1.html\2"', body)
     words = len(re.findall(r"\w+", strip_tags(body)))
     meta.append((p.stem, title_of(md, p.stem).replace("`", ""), words)); bodies.append(body); tokens.append(conv.toc_tokens)

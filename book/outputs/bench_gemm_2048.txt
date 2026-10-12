@@ -1,0 +1,11 @@
+N=2048  (17.18 GFLOP per GEMM)
+  B strided  naive                     5.1 GFLOP/s   max err 4.9e-04
+  B strided  threads                   6.4 GFLOP/s   max err 4.9e-04
+  B strided  4x4 tile + threads       89.5 GFLOP/s   max err 5.0e-04
+  B^T        naive                    23.4 GFLOP/s   max err 1.2e-04
+  B^T        threads                 119.6 GFLOP/s   max err 1.2e-04
+  B^T        4x4 tile                 75.9 GFLOP/s   max err 1.2e-04
+  B^T        4x4 tile + threads      334.7 GFLOP/s   max err 1.2e-04
+  B^T        + 64x64 cache blocks    337.9 GFLOP/s   max err 1.2e-04
+  Tensor A@B (layout pass+opt)       303.2 GFLOP/s   (end to end, includes the transpose copy)
+  numpy                              399.6 GFLOP/s

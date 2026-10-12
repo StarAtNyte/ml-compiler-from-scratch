@@ -16,7 +16,7 @@ a CPU/GPU optimizer, in about 2,800 lines of Python. It depends only on numpy an
 | Evaluate week-1 programs by rewriting | `STACK`/`CALL`/`INDEX` programs reduce to constants |
 | Compile any shape graph to C | GEMM, conv2d, softmax, attention, … all checked against numpy |
 | Train an MLP on MNIST (week 5) | 94% test accuracy in 600 steps, ~15 ms/step |
-| Fast GEMM (week 6) | 1.9 → **114 GFLOP/s** (1024³), numpy/OpenBLAS: 132 |
+| Fast GEMM (week 6) | 5 → **321 GFLOP/s** (1024³, end to end), numpy/OpenBLAS: 449 |
 | Flash attention, three ways (week 6) | unfused / fused-recompute / online softmax, all exact |
 | GPU kernels (weeks 7–8) | CUDA renderer, shared-memory tiled GEMM, WMMA; verified via a CPU emulator |
 | Train a GPT on Tiny Shakespeare (weeks 9–10) | 112k params, val loss 3.83 → 2.11 in 600 steps, ~0.24 s/step |
@@ -79,4 +79,5 @@ tools/           build_book.py, site/ (the website's CSS and JS)
   math is verified by running the same kernels through a CPU emulator. `tests/test_w07_gpu.py` runs the
   shared-memory GEMM on a real GPU when one is available.
 - Symbolic shapes and KV caching are design exercises (chapter 15), not implemented.
-- Benchmarks are from a laptop; expect noise. `book/outputs/` has the raw runs.
+- Benchmarks are from a laptop and vary between runs by up to 2x (thermal limits, power source,
+  background load). `book/outputs/` has the raw runs.

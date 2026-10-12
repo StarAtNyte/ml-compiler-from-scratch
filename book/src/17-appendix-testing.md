@@ -19,21 +19,21 @@ when something fails anyway, and, for every bug in `book/NOTES.md`, the test tha
 ## B.1 The shape of the suite
 
 The reference suite has one file per week, named `tests/test_wNN_topic.py`, and a 15-line helper module. With
-a warm kernel cache it runs in about ten seconds:
+a warm kernel cache it runs in a few seconds:
 
 ```text
-........................................................................ [ 93%]
-.s...                                                                    [100%]
+........................................................................ [ 84%]
+.........s...                                                            [100%]
 ============================= slowest 8 durations ==============================
-5.78s call     tests/test_w09_models.py::test_tiny_gpt_learns
-0.63s call     tests/test_w05_tensor.py::test_training_reduces_loss
-0.61s call     tests/test_w01_uops.py::test_deep_graph_no_recursion_error
-0.28s call     tests/test_w09_models.py::test_attention_is_causal
-0.13s call     tests/test_w06_opt.py::test_gemm_opts_correct[opts5]
-0.09s call     tests/test_w06_opt.py::test_fused_attention_reduces_are_not_nested
-0.08s call     tests/test_w05_tensor.py::test_adamw_steps_reuse_one_plan
-0.07s call     tests/test_w06_opt.py::test_gemm_opts_correct[opts6]
-81 passed, 1 skipped in 8.60s
+2.63s call     tests/test_w09_models.py::test_tiny_gpt_learns
+0.29s call     tests/test_w01_uops.py::test_deep_graph_no_recursion_error
+0.26s call     tests/test_w05_tensor.py::test_training_reduces_loss
+0.11s call     tests/test_w09_models.py::test_attention_is_causal
+0.05s call     tests/test_w06_opt.py::test_gemm_opts_correct[opts5]
+0.03s call     tests/test_w05_tensor.py::test_adamw_steps_reuse_one_plan
+0.03s call     tests/test_w06_opt.py::test_fused_attention_reduces_are_not_nested
+0.03s call     tests/test_w05_tensor.py::test_gradients[matmul-<lambda>-<lambda>]
+84 passed, 1 skipped in 3.87s
 ```
 
 (The skipped test runs the shared-memory GEMM on a real GPU; the reference machine has none, NOTES 25.) From
@@ -50,7 +50,7 @@ Per file:
 | `test_w03_loops.py` | 4 | 0.2 s | hand-written GEMM and conv1d; loop-invariant hoisting; a RANGE without END is an error | numpy (`@`, `np.correlate`); schedule position |
 | `test_w04_rangeify.py` | 10 | 0.2 s | GEMM from views, the syllabus non-GEMM, random movement chains, reductions, STACK/INDEX, PAD/FLIP | numpy |
 | `test_w05_tensor.py` | 24 | 1.2 s | Tensor ops, gradients, kernel counts, training, SGD momentum, kernel arguments after deleted reads, int/float promotion, `item()` and `detach()`, one plan across AdamW steps | numpy; finite differences; closed-form momentum |
-| `test_w06_opt.py` | 12 | 0.5 s | every `Opts` combination on GEMM, shared reduce loops, unrolling, layout pass, fused attention loop depth | numpy; structure of the C |
+| `test_w06_opt.py` | 15 | 0.5 s | every `Opts` combination on GEMM, cache blocking (`Opts.tile`), shared reduce loops, unrolling, layout pass, fused attention loop depth | numpy; structure of the C |
 | `test_w07_gpu.py` | 7 + 1 skipped | 0.4 s | GPU lowering through the CPU emulator, launch dims, CUDA text | numpy via emulator; text checks |
 | `test_w09_models.py` | 3 | 8.2 s | LayerNorm, causal masking, a tiny GPT learning | numpy; invariance; loss curve |
 
@@ -409,8 +409,8 @@ FAILED .../test_structure.py::test_adamw_steps_reuse_one_plan
 ```
 
 The plan-count test turns a two-minute slowdown into a one-line failure with a number in it: three more steps
-made three more plans. The loop-depth test pins the structure that NOTES 12's O(N³) bug destroyed. To be
-honest about its strength: re-creating that bug by simply disabling the `simplify` call at `RESHAPE` did *not*
+made three more plans. The loop-depth test pins the structure that NOTES 12's O(N³) bug destroyed. Its strength is limited:
+re-creating that bug by simply disabling the `simplify` call at `RESHAPE` did *not*
 reproduce the old nesting in the current code (other rules now clean up the indices), so this test is a guard
 on the property, not a demonstrated catch.
 

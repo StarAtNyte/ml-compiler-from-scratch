@@ -82,5 +82,5 @@
   <text x="520" y="406" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">one 64 B line serves 16 steps,</text>
   <text x="520" y="424" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">one vector load serves 8</text>
   <text x="561.0" y="206.0" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#bf4520">64 B line</text>
-  <text x="460" y="462" text-anchor="middle" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="16" fill="#4f5d75">same matrix, same math: 1.9 versus 8.0 GFLOP/s, one thread</text>
+  <text x="460" y="462" text-anchor="middle" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="16" fill="#4f5d75">same matrix, same math: 5.2 versus 28.0 GFLOP/s, one thread</text>
 </svg>

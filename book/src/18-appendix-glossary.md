@@ -5,8 +5,9 @@ broader meaning in the literature, the definition gives the general sense first 
 second, with the module where it lives. The second half collects quiz questions for every week of the course,
 in the style of the in-class quizzes, with answers in collapsed blocks.
 
-**Where this fits:** this is the last appendix. Op-level details are in
-[Appendix A](16-appendix-reference.md); testing practice is in [Appendix B](17-appendix-testing.md).
+**Where this fits:** op-level details are in [Appendix A](16-appendix-reference.md); testing practice is in
+[Appendix B](17-appendix-testing.md); the last appendix, [Appendix D](19-appendix-source.md), lists the full
+source.
 
 ## C.1 Glossary
 
@@ -189,8 +190,8 @@ across threads. Emitted for `THREAD` ranges.
 **`OPT`.** Environment variable selecting the kernel optimizer in `tensor.py`: 0 none, 1 `HandOpt` (default),
 2 `SearchOpt`.
 
-**`Opts`.** The per-kernel schedule: `upcast` factors, a `thread` axis, `unroll` factor, and GPU `local` sizes
-(`rangeify.Opts`).
+**`Opts`.** The per-kernel schedule: `upcast` factors, a `thread` axis, `unroll` factor, `tile` (cache block)
+sizes, and the GPU flag with `local` sizes (`rangeify.Opts`).
 
 **`PatternMatcher` / `UPat`.** A list of (pattern, function) rewrite rules, indexed by root op; `UPat` matches
 UOps structurally, binds names, and with a list `src` tries all orders of a commutative op's sources.
@@ -298,7 +299,8 @@ relevant.
 8. When inlining an outer CALL, why must the substitution not descend into a nested CALL's body?
 9. What does folding `16777216.0 + 1.0` in f32 give, and why must the folder round through f32?
 
-<details markdown="1"><summary>Answers, week 1</summary>
+<details>
+<summary>Answers, week 1</summary>
 
 1. Python treats `1 == 1.0 == True` and `0.0 == -0.0` as equal with equal hashes, so a cache keyed on `arg`
    would merge an `i32`, an `f32` and a `bool` constant into one node. `_argkey` adds the type and uses `repr`
@@ -329,7 +331,8 @@ relevant.
 13. Name one error that address-space inference catches and dtype/shape inference cannot.
 14. Why does `compile_c` compile in a temporary directory *inside* the cache directory?
 
-<details markdown="1"><summary>Answers, week 2</summary>
+<details>
+<summary>Answers, week 2</summary>
 
 10. "`mem`, but only after `dep` has executed." A graph has no order except data dependence; a read of memory
     after a write to it has no data edge to the write unless one is added. `AFTER` is that edge.
@@ -353,7 +356,8 @@ relevant.
 19. How does the loop-IR GEMM in `tests/test_w03_loops.py` keep its accumulator inside the `i` and `j` loops but
     outside `k`?
 
-<details markdown="1"><summary>Answers, week 3</summary>
+<details>
+<summary>Answers, week 3</summary>
 
 15. The set of `RANGE`s the node must sit inside: the union of its sources' scopes, plus itself for a `RANGE`,
     minus the ranges an `END` closes.
@@ -379,7 +383,8 @@ relevant.
 24. What does rangeify turn a `STACK` into?
 25. How is `PAD` built without a pad primitive?
 
-<details markdown="1"><summary>Answers, week 4</summary>
+<details>
+<summary>Answers, week 4</summary>
 
 20. `A * rowsum(B)`: reshaping `A` to `(N, N, 1)` and `B` to `(N, 1, N)` and reducing the last axis sums `B`'s
     rows. A GEMM reshapes `A` to `(N, 1, K)`, `B` *transposed* to `(1, N, K)`, multiplies and reduces the last
@@ -409,7 +414,8 @@ relevant.
 32. Why does autodiff refuse `STORE`, `CALL`, `AFTER`, `RANGE` and `END`?
 33. Why is `nn.Embedding` a one-hot matmul?
 
-<details markdown="1"><summary>Answers, week 5</summary>
+<details>
+<summary>Answers, week 5</summary>
 
 26. Every root (unless it is already a contiguous buffer), every `STAGE` (except `STAGE(x, "detach")`,
     which is stripped), and every `REDUCE` unless `fuse_reduce` is on.
@@ -439,7 +445,8 @@ relevant.
 38. What does the layout pass do, and when does it stage an operand?
 39. How do `hand_opt` and `search_opt` differ?
 
-<details markdown="1"><summary>Answers, week 6</summary>
+<details>
+<summary>Answers, week 6</summary>
 
 34. Each step of `k` loads 4 values of A and 8 of B (12 loads) and performs 32 multiply-adds into 32
     accumulators held in registers: about 2.7 multiply-adds per load, versus 1/2 for the naive loop.
@@ -467,7 +474,8 @@ relevant.
 44. What are the operand and accumulator types of a typical tensor-core MMA, and what tile does `wmma_gemm`
     use?
 
-<details markdown="1"><summary>Answers, weeks 7–8</summary>
+<details>
+<summary>Answers, weeks 7–8</summary>
 
 40. The last (fastest-varying, contiguous) axis, so neighboring threads of a warp touch neighboring addresses
     and their accesses coalesce (NOTES 23).
@@ -489,7 +497,8 @@ relevant.
 48. What were the measured effects, on GPT, of `stage_broadcast_compute` and of identity-based hashing plus
     memoized `simplify`?
 
-<details markdown="1"><summary>Answers, weeks 9–10</summary>
+<details>
+<summary>Answers, weeks 9–10</summary>
 
 45. So every forward pass has the same shapes, the same graph structure, and therefore one compiled plan
     (NOTES 18).
@@ -508,7 +517,8 @@ relevant.
 50. What do *declared bounds* on a symbolic size buy the compiler?
 51. In data-parallel training, what is communicated each step?
 
-<details markdown="1"><summary>Answers, Chapter 15</summary>
+<details>
+<summary>Answers, Chapter 15</summary>
 
 49. `2 · layers · T · dim · bytes`: 2 · 2 · 64 · 64 · 4 = 65,536 bytes (64 KiB).
 50. Bounds analysis keeps working: index expressions cannot overflow, div/mod rules fire, the renderer can use

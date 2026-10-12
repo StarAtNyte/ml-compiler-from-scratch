@@ -60,3 +60,13 @@ def test_fused_attention_reduces_are_not_nested():                 # NOTES 12
   plan, _ = make_plan([attention(q, k, v).uop], fuse_reduce=True, opt=FlashOpt)
   # loops: i (thread), then a reduce over keys j, inside it a dot product over D: depth 3, never 4
   assert max(max_loop_depth(k.src) for k in plan.kernels) <= 3
+
+@pytest.mark.parametrize("tile", [{0: 8, 1: 16}, {1: 32}, {0: 16}])
+def test_cache_blocking_correct(tile):
+  M, N, K = 32, 64, 48
+  a, b = np.random.randn(M, K).astype(np.float32), np.random.randn(K, N).astype(np.float32)
+  c = np.zeros(M * N, np.float32)
+  src = render_c(lower(gemm_graph(M, N, K), buf(2, M * N), Ctx(opts=Opts(upcast={0: 4, 1: 4}, thread=0, tile=tile))), "k")
+  Program(src, "k")(a, b, c)
+  np.testing.assert_allclose(c.reshape(M, N), a @ b, rtol=1e-4, atol=1e-4)
+  assert src.count("for (") == 3 + len(tile)                # one extra block loop per tiled axis

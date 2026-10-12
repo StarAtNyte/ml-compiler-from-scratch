@@ -44,7 +44,7 @@ and both sides can be large. In [Chapter 9](09-tensor-mnist.md)'s softmax, fusin
 per element in two kernels instead of storing the exponentials, a clear win. NOTES 15 records the other
 extreme: in a GPT, a LayerNorm output EXPANDed into a matmul was recomputed for every output column, and
 one training step spent 374 ms in kernels until `stage_broadcast_compute` started staging such tensors
-(125 ms):
+(125 ms; see [Chapter 7](07-kernelize.md), Section 7.10):
 
 @include uopc/kernelize.py#stage_broadcast_compute
 
@@ -291,7 +291,7 @@ broadcast". The fix makes the user's explicit request win: with `fuse_reduce=Tru
 
 @include uopc/kernelize.py:121-125
 
-and the example's docstring now describes the recomputation honestly. The lesson is about debugging,
+and the example's docstring now describes the recomputation accurately. The lesson is about debugging,
 not attention: when a benchmark's description and its plan disagree, believe the plan
 (`make_plan(...).temps`).
 
@@ -307,7 +307,7 @@ added five extra computations of `Q K^T`, each done without the register tiling 
 ## 11.5 The O(N^3) bug: when an index lies about its loops
 
 Before the version above existed, fused attention had a much worse problem. At `N = 512` it took
-1787 ms; after the fix described below, 7 ms (NOTES 12). The story is worth telling in full, because it is the
+1787 ms; after the fix described below, 7 ms (NOTES 12). This section tells the full story, because it is the
 cleanest example in this book of a semantic property (*which loops does this value depend on?*) being
 decided by a syntactic one (*which loop variables does this expression mention?*).
 
@@ -471,10 +471,10 @@ online o/l = 21.546979   two-pass softmax(s) @ v = 21.546979
 
 @diagram 11-online-softmax
 
-The same algebra merges two *partial* states, not just a state and one key. If `(m1, l1, o1)` summarizes
+The same algebra merges two *partial* states, as well as a state and one key. If `(m1, l1, o1)` summarizes
 one set of keys and `(m2, l2, o2)` another, then with `m = max(m1, m2)` the union is
 `(m, l1 e^{m1 - m} + l2 e^{m2 - m}, o1 e^{m1 - m} + o2 e^{m2 - m})`. That associativity is what lets GPU
-implementations process keys in blocks, and split long sequences across thread blocks (exercise 11.6).
+implementations process keys in blocks, and split long sequences across thread blocks (Exercise 11.6).
 
 ## 11.7 Implementation 3: online softmax in the loop IR
 
@@ -597,7 +597,7 @@ reason is everything [Chapter 10](10-cpu-performance.md) taught: each thread han
 every `k_j` and `v_j` loaded from cache is used for exactly one query (no register tile across
 queries), and the dot product is a single dependency chain. The natural next step is to process a *block*
 of queries per thread, so that each loaded key and value row serves the whole block: the register tiling
-of Chapter 10 applied to attention (exercise 11.5). That step is precisely what FlashAttention does on a
+of Chapter 10 applied to attention (Exercise 11.5). That step is precisely what FlashAttention does on a
 GPU.
 
 ## 11.9 How FlashAttention tiles on a GPU
@@ -635,7 +635,7 @@ execute near peak. In `uopc` terms, the score tile is a WMMA-lowered GEMM
 does not depend on (`((i*N + j)//N) % N`) makes the reduce lowering place an accumulator inside that loop.
 Fused attention became cubic: 9.2 ms became 2211 ms at `N = 512` in the reproduction above, with identical
 output. Simplify indices before any analysis that asks which loops an expression uses, and test
-performance, not just values.
+performance as well as values.
 
 **A fused kernel's passes multiply its recompute.** With `D = 64` and `FlashOpt`'s upcast of 16, the
 fully fused kernel makes four output passes plus two softmax passes, each recomputing `Q K^T` for the row,
@@ -668,53 +668,45 @@ threads would share one `acc2[64]` and the output would be a race.
 
 ## Exercises
 
-**11.1** ★ How large are `S` and `P` for `N = 8192` in `f32`, per head? A GPT-style model with 12 heads,
-batch 8: how much memory would unfused attention need for one layer's `S`?
-
-**11.2** ★ Predict the number of full passes over the keys (each with a `D = 64` dot product) that the
-fully fused kernel of 11.4 makes per query row with `FlashOpt`'s upcast set to 8, 16, 32 and 64. Which one
-needs the most registers?
-
-**11.3** ★ Prove the merge rule for two partial states `(m1, l1, o1)` and `(m2, l2, o2)` from 11.6, and
-check it numerically by splitting the worked example's keys into `{0}` and `{1, 2}`.
-
-**11.4** ★★ Add a causal mask to `online_attention_ir`: query `i` may only attend to keys `j <= i`. Try
-two ways: mask the scores with a WHERE (what value must a masked score get, given the NaN pitfall?), and
-make the key loop's end depend on `i` (does the IR, the linearizer and the renderer accept a RANGE whose
-end is an expression of another RANGE?). Verify against NumPy and compare the speed.
-
-**11.5** ★★ Process a block of 4 query rows per iteration of the THREAD loop in `online_attention_ir`, so
-that each loaded `k_j` and `v_j` serves four queries. Measure at `N = 1024` and `2048`, and compute the new
-GFLOP/s.
-
-**11.6** ★★ Flash-decoding: for `N_q = 1` query and `N = 65536` keys, the row loop has one iteration and
-one thread does everything. Split the keys into `T` chunks processed by different threads, each producing a
-partial `(m, l, o)`, and merge them with exercise 11.3's rule in a second kernel.
-
-**11.7** ★★ Give `FlashOpt` an upcast of the full head dimension (`D = 64`), so the fused kernel makes
-three passes instead of six. Is it faster? Then try the other choice the first version made by accident:
-run with `fuse_reduce=True` but call `stage_broadcast_compute` anyway, so `P` is stored. Rank the three
-variants and explain using register pressure and recomputation.
-
-**11.8** ★★ Find the bug: a student's online kernel computes `l = l * corr + p` and `o[d] = o[d] + p * v[j, d]`.
-On which inputs does it pass a test against NumPy, and on which does it fail? Write the failing test.
-
-**11.9** ★★★ Implement the backward pass of attention with recomputation: store only `O` and the per-row
-log-sum-exp in the forward pass, and recompute `P` block by block in the backward pass to produce `dQ`,
-`dK`, `dV`. Check against `gradient()` applied to the unfused Tensor graph.
+1. ★ **Size the matrices.** How large are `S` and `P` for `N = 8192` in `f32`, per head? A GPT-style model with 12 heads,
+   batch 8: how much memory would unfused attention need for one layer's `S`?
+2. ★ **Count the passes.** Predict the number of full passes over the keys (each with a `D = 64` dot product) that the
+   fully fused kernel of 11.4 makes per query row with `FlashOpt`'s upcast set to 8, 16, 32 and 64. Which one
+   needs the most registers?
+3. ★ **Merge two states.** Prove the merge rule for two partial states `(m1, l1, o1)` and `(m2, l2, o2)` from 11.6, and
+   check it numerically by splitting the worked example's keys into `{0}` and `{1, 2}`.
+4. ★★ **Causal mask.** Add a causal mask to `online_attention_ir`: query `i` may only attend to keys `j <= i`. Try
+   two ways: mask the scores with a WHERE (what value must a masked score get, given the NaN pitfall?), and
+   make the key loop's end depend on `i` (does the IR, the linearizer and the renderer accept a RANGE whose
+   end is an expression of another RANGE?). Verify against NumPy and compare the speed.
+5. ★★ **Query blocking.** Process a block of 4 query rows per iteration of the THREAD loop in `online_attention_ir`, so
+   that each loaded `k_j` and `v_j` serves four queries. Measure at `N = 1024` and `2048`, and compute the new
+   GFLOP/s.
+6. ★★ **Flash-decoding.** For `N_q = 1` query and `N = 65536` keys, the row loop has one iteration and
+   one thread does everything. Split the keys into `T` chunks processed by different threads, each producing a
+   partial `(m, l, o)`, and merge them with Exercise 3's rule in a second kernel.
+7. ★★ **Upcast the head.** Give `FlashOpt` an upcast of the full head dimension (`D = 64`), so the fused kernel makes
+   three passes instead of six. Is it faster? Then try the other choice the first version made by accident:
+   run with `fuse_reduce=True` but call `stage_broadcast_compute` anyway, so `P` is stored. Rank the three
+   variants and explain using register pressure and recomputation.
+8. ★★ **Find the bug.** A student's online kernel computes `l = l * corr + p` and `o[d] = o[d] + p * v[j, d]`.
+   On which inputs does it pass a test against NumPy, and on which does it fail? Write the failing test.
+9. ★★★ **Backward with recompute.** Implement the backward pass of attention with recomputation: store only `O` and the per-row
+   log-sum-exp in the forward pass, and recompute `P` block by block in the backward pass to produce `dQ`,
+   `dK`, `dV`. Check against `gradient()` applied to the unfused Tensor graph.
 
 <details>
-<summary>Solutions to the ★ exercises</summary>
+<summary>Solutions to ★ exercises</summary>
 
-**11.1** `8192^2 * 4 = 268 MB` per head for `S` (and as much again for `P`). For 12 heads and batch 8:
+**1.** `8192^2 * 4 = 268 MB` per head for `S` (and as much again for `P`). For 12 heads and batch 8:
 `96 * 268 MB = 25.8 GB` for one layer's `S`, which is why nobody materializes it at long context.
 
-**11.2** Two softmax passes plus `64 / upcast` output passes: 10, 6, 4 and 3 passes for upcasts of 8, 16,
+**2.** Two softmax passes plus `64 / upcast` output passes: 10, 6, 4 and 3 passes for upcasts of 8, 16,
 32 and 64. The upcast of 64 needs the most registers: 64 output accumulators live across the whole key
 loop (far more than AVX2's 16 vector registers, so they spill), which is the price of making only three
 passes.
 
-**11.3** Each `l` is a sum of terms `exp(s_k - m_x)`; multiplying by `exp(m_x - m)` re-expresses every term
+**3.** Each `l` is a sum of terms `exp(s_k - m_x)`; multiplying by `exp(m_x - m)` re-expresses every term
 relative to `m`, and the union's sum is the sum of the two re-expressed sums (likewise for `o`).
 Numerically: `{0}` gives `(1, 1, 10)`; `{1, 2}` gives `m = 3`, `l = 1 + e^{-1} = 1.3679`,
 `o = 20 + 30 e^{-1} = 31.0364`. Merging with `m = 3`: `l = 1 * e^{-2} + 1.3679 = 1.5032`,

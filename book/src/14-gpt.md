@@ -385,17 +385,10 @@ The `(1-β^t)` terms correct the bias of averages that start at zero. "W" means 
 
 @include uopc/nn.py#AdamW
 
-The comment in `step` is a bug story (NOTES 17), and it is worth understanding exactly. The bias corrections
-depend on the step number `t`. Written naively as Python floats, `m * (lr / (1 - b1**t))`, they become `CONST`
-nodes in the graph, with a different value at every step. The structural cache (Chapter 7) keys compiled plans
-on the graph's structure *including constant values*:
-
-@include uopc/kernelize.py#_structure_key
-
-(`_argkey` puts the CONST's value in the key.) So every step's graph is new, and every step pays the full
-compile, 243 kernels through rangeify, the optimizer and the cache lookup. The fix passes the two corrections
-as 1-element *tensors*, which are `BUFFER`s, whose keys contain only dtype and shape. Their values change, the
-graph doesn't, and step 2 onward is a cache hit. Section 14.11 measures what the naive version costs.
+The comment in `step` is a bug story (NOTES 17). Written as Python floats, the bias corrections become
+`CONST`s whose values change every step, so the structural cache misses every step and recompiles all 243
+kernels. Passing them as 1-element tensors keeps the graph's structure fixed (see
+[Chapter 7](07-kernelize.md), Section 7.8). Section 14.12 measures what the naive version costs.
 
 The update is realized together with everything else. `Tensor.realize_all(*news, *self.m, *self.v, *extra)` is
 called with the loss as `extra`, so the forward pass, the backward pass, the optimizer update and the loss
@@ -646,7 +639,7 @@ calls), but the proportions are what matter. Almost everything is under `make_pl
 expressions inside `rangeify`, in particular at every `RESHAPE` (line 95) and in `_reduce`. This is the cost
 of NOTES 12's fix. Simplifying indices eagerly is what keeps reductions out of the wrong loops, and it is paid
 for in compile time. `hand_opt` → `lower` is the CPU optimizer rangeifying each kernel with its upcasts. Four
-lines are worth remembering. `tottime` is time in the function itself and `cumtime` includes callees. Sort by
+rules for reading a profile: `tottime` is time in the function itself and `cumtime` includes callees. Sort by
 `cumulative` to find the subsystem, then by `tottime` to find the hot function. The `ncalls` column tells you
 whether a function is slow or just called too often.
 
@@ -722,46 +715,35 @@ the machine with other jobs (load average 5–10), so the absolute numbers are n
 
 ## Pitfalls
 
-**1. The O(N³) attention (NOTES 12).** Rangeify of a `RESHAPE` produces `((i*N + j)//N) % N`, which equals `i`
-but syntactically mentions `j`. The reduce lowering places the accumulator in the loops its index mentions,
-so the softmax reductions ended up nested inside the j loop. Every result was correct and the work was N
-times too high. Simplifying at each `RESHAPE` fixed it (fused attention at N=512: 1787 ms → 7 ms). **A
-dependence analysis is only as precise as the expressions it reads.**
+**1. The O(N³) attention (NOTES 12).** An unsimplified `RESHAPE` index put the softmax reductions inside the
+j loop, so fused attention did N times too much work (see [Chapter 11](11-fusion-flash.md), Section 11.5).
 
-**2. Undistributed products hide div/mod opportunities (NOTES 14).** `((a + b) * c) // d` can't be simplified
-term by term until it has been distributed into `a*c + b*c`. Without distribution, GPT's attention kernels
-carried `((x/4096)%4)` chains in their inner loops. The lesson is the general one about rewrite systems
-(Chapter 2): a rule can only fire on the form it was written for, so normalizing first matters as much as the
-rule itself. Some residue remains. The fused `q @ kᵀ` kernel still computes `((alu14+256)%192)` in its inner
+**2. Undistributed products hide div/mod opportunities (NOTES 14).** Without distributing `(a + b) * c`,
+GPT's attention kernels carried `((x/4096)%4)` chains in their inner loops (see [Chapter 6](06-rangeify.md),
+Pitfalls). Some residue remains. The fused `q @ kᵀ` kernel still computes `((alu14+256)%192)` in its inner
 loop where `alu14 ∈ [0, 63]`, so the value is just `alu14 + 64`. A bounds-based rule (if `vmin(x)//c ==
 vmax(x)//c` then `x % c = x - c*(vmin(x)//c)`) would remove it (Exercise 14.8).
 
-**3. The fusion/recompute trap (NOTES 15).** Fusing everything between reductions sounds free, but a LayerNorm
-output broadcast into a matmul is recomputed for every output column. Kernel time per step went from 374 ms to
-125 ms when such tensors were staged. Don't overcorrect: staging softmax's tiny `1/sum` added kernels and
-saved nothing, which is why there is a cost model.
+**3. The fusion/recompute trap (NOTES 15).** A LayerNorm output broadcast into a matmul is recomputed for every
+output column; staging such tensors took kernel time from 374 ms to 125 ms per step (see
+[Chapter 7](07-kernelize.md), Pitfalls).
 
-**4. `substitute` wraps the original (NOTES 16).** `graph.substitute({x: STAGE(x)})` replaces x by a STAGE of
-the *original* x, so any candidates *inside* x are left unstaged. The fix is a bottom-up rebuild that wraps
-the already-rewritten node:
-
-@include uopc/uop.py#UOp.wrap
+**4. `substitute` wraps the original (NOTES 16).** Staging with `substitute` leaves candidates nested inside a
+target unstaged; `UOp.wrap` rebuilds bottom-up instead (see [Chapter 7](07-kernelize.md), Pitfalls).
 
 **5. Python floats break the JIT cache (NOTES 17).** Anything that changes every step and enters the graph as a
 `CONST` (bias corrections, a learning-rate schedule, a dropout seed, a temperature) makes every step a cache
-miss. The ablation measured it at about 20–30×. Pass such values as tensors.
+miss, about 20–30× slower in the ablation. Pass such values as tensors (see [Chapter 7](07-kernelize.md),
+Pitfalls).
 
-**6. Variable shapes break the JIT cache (NOTES 18).** The same problem along the shape axis. A sampler that
-feeds a growing prompt compiles a new plan per length. Pad to a fixed shape, or use symbolic shapes (Chapter
-15).
+**6. Variable shapes break the JIT cache (NOTES 18).** A sampler that feeds a growing prompt compiles a new plan
+per length. Pad to a fixed shape, or use symbolic shapes (Chapter 15).
 
-**7. Staging a whole broadcast product (NOTES 21).** An early layout pass "fixed" a strided operand by staging
-the entire (128, 784, 128) broadcast product, a 21 ms kernel to save a few. Push movement ops to the leaves
-first (`push_views`), and only stage operands strictly smaller than the reduce input.
+**7. Staging a whole broadcast product (NOTES 21).** An early layout pass staged the entire (128, 784, 128)
+broadcast product, a 21 ms kernel to save a few (see [Chapter 10](10-cpu-performance.md), Section 10.6).
 
-**8. Python overhead is compiler overhead (NOTES 22).** `UOp.__eq__`/`__hash__` written in Python, and Enum's
-Python-level `__hash__`, made compiling 12 GPT steps take 163 s. Hash consing means identity *is* equality
-(Chapter 1), so the C-level `object.__hash__` is correct, and memoizing `simplify` removed repeated work: 47 s.
+**8. Python overhead is compiler overhead (NOTES 22).** Python-level `__eq__`/`__hash__` made compiling 12 GPT
+steps take 163 s; identity hashing and memoized `simplify` brought it to 47 s (see [Chapter 1](01-uops.md)).
 Profile the compiler as seriously as the kernels.
 
 **9. A threshold on the wrong quantity.** `stage_broadcast_compute` stages a broadcast tensor when
