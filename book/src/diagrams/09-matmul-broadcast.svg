@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 430" role="img" aria-labelledby="mmb-title mmb-desc">
+  <title id="mmb-title">Matrix multiplication as broadcast, multiply, reduce</title>
+  <desc id="mmb-desc">A of shape (M, 1, K) is expanded along N and B transposed of shape (1, N, K) is expanded along M; together they fill an (M, N, K) box of products. Summing the box along K collapses it onto the (M, N) face, which is C. One output element C[i, j] is the line through the box along K that pairs row i of A with row j of B transposed.</desc>
+  <defs>
+    <marker id="mmb-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/>
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f5f5f5"/>
+
+  <!-- connectors -->
+  <g stroke="#4f5d75" stroke-width="1.2" fill="none" marker-end="url(#mmb-arrow)">
+    <line x1="220" y1="250" x2="294" y2="250"/>
+    <line x1="350" y1="136" x2="350" y2="162"/>
+    <line x1="582" y1="300" x2="694" y2="300"/>
+  </g>
+  <g font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">
+    <text x="257" y="240" text-anchor="middle">expand N</text>
+    <text x="342" y="154" text-anchor="end">expand M</text>
+    <text x="638" y="288" text-anchor="middle">sum over K</text>
+  </g>
+
+  <!-- A slab: (M, 1, K), plane of M (down) and K (back) -->
+  <polygon points="100,200 210,130 210,290 100,360" fill="rgba(45,49,66,0.06)" stroke="#2d3142" stroke-width="1"/>
+  <line x1="100" y1="250" x2="210" y2="180" stroke="#2d3142" stroke-width="2.4"/>
+  <g font-family="Geist, Inter, system-ui, sans-serif">
+    <text x="100" y="104" font-size="14" font-weight="600" fill="#2d3142">A</text>
+    <text x="116" y="104" font-size="11" fill="#4f5d75" font-family="Geist Mono, JetBrains Mono, monospace">(M, 1, K)</text>
+  </g>
+  <text x="92" y="254" text-anchor="end" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">row i</text>
+
+  <!-- B^T slab: (1, N, K), plane of N (right) and K (back) -->
+  <polygon points="300,130 480,130 590,60 410,60" fill="rgba(45,49,66,0.06)" stroke="#2d3142" stroke-width="1"/>
+  <line x1="420" y1="130" x2="530" y2="60" stroke="#2d3142" stroke-width="2.4"/>
+  <g font-family="Geist, Inter, system-ui, sans-serif">
+    <text x="604" y="70" font-size="14" font-weight="600" fill="#2d3142">Bᵀ</text>
+    <text x="628" y="70" font-size="11" fill="#4f5d75" font-family="Geist Mono, JetBrains Mono, monospace">(1, N, K)</text>
+  </g>
+  <text x="530" y="48" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">row j</text>
+
+  <!-- the (M, N, K) box -->
+  <g stroke="rgba(45,49,66,0.45)" stroke-width="1" stroke-dasharray="4,3" fill="none">
+    <line x1="410" y1="130" x2="410" y2="290"/>
+    <line x1="410" y1="290" x2="300" y2="360"/>
+    <line x1="410" y1="290" x2="590" y2="290"/>
+  </g>
+  <polygon points="300,200 410,130 590,130 480,200" fill="rgba(45,49,66,0.05)" stroke="#2d3142" stroke-width="1"/>
+  <polygon points="480,200 590,130 590,290 480,360" fill="rgba(45,49,66,0.09)" stroke="#2d3142" stroke-width="1"/>
+  <rect x="300" y="200" width="180" height="160" fill="rgba(45,49,66,0.03)" stroke="#2d3142" stroke-width="1"/>
+  <!-- one dot product: the K-line through (i, j) -->
+  <line x1="420" y1="250" x2="530" y2="180" stroke="#bf4520" stroke-width="2.4"/>
+  <circle cx="420" cy="250" r="3.5" fill="#bf4520"/>
+  <g font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">
+    <text x="390" y="378" text-anchor="middle">N</text>
+    <text x="290" y="284" text-anchor="end">M</text>
+    <text x="546" y="342">K</text>
+    <text x="390" y="400" text-anchor="middle">products  (M, N, K)</text>
+  </g>
+
+  <!-- C -->
+  <rect x="700" y="200" width="180" height="160" fill="#f5f5f5" stroke="#2d3142" stroke-width="1"/>
+  <circle cx="820" cy="250" r="4" fill="#bf4520"/>
+  <text x="830" y="246" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#bf4520">C[i, j]</text>
+  <g font-family="Geist, Inter, system-ui, sans-serif">
+    <text x="700" y="188" font-size="14" font-weight="600" fill="#2d3142">C</text>
+    <text x="716" y="188" font-size="11" fill="#4f5d75" font-family="Geist Mono, JetBrains Mono, monospace">(M, N)</text>
+  </g>
+
+  <!-- callout -->
+  <text x="700" y="392" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="16" fill="#4f5d75">the box is a loop nest,</text>
+  <text x="700" y="412" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="16" fill="#4f5d75">never a buffer</text>
+</svg>

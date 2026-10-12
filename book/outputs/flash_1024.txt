@@ -1,0 +1,3 @@
+unfused      9.82 ms  err 3.3e-07   (materializes 4.2 MB of scores)
+fused       28.48 ms  err 3.6e-07   (no N*N buffer, QK^T recomputed)
+online      10.00 ms  err 4.0e-07   (one pass, running max/sum)

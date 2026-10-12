@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" role="img" aria-labelledby="ch15-landscape-title ch15-landscape-desc">
+  <title id="ch15-landscape-title">Where ML compilers draw their boundaries</title>
+  <desc id="ch15-landscape-desc">Eight ML compilers placed against five jobs (capture, graph IR, fusion and scheduling, kernel code generation, runtime); bars show which jobs each system owns, with uopc and tinygrad covering all five.</desc>
+  <defs>
+    <marker id="ch15-landscape-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/>
+    </marker>
+    <marker id="ch15-landscape-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#bf4520"/>
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f5f5f5"/>
+  <text x="300.0" y="72" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="middle" letter-spacing="0.08em">CAPTURE</text>
+  <text x="436.0" y="72" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="middle" letter-spacing="0.08em">GRAPH IR</text>
+  <text x="572.0" y="72" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="middle" letter-spacing="0.08em">FUSE · SCHEDULE</text>
+  <text x="708.0" y="72" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="middle" letter-spacing="0.08em">KERNEL CODEGEN</text>
+  <text x="844.0" y="72" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="middle" letter-spacing="0.08em">RUNTIME</text>
+  <line x1="232" y1="84" x2="232" y2="456" stroke="rgba(45,49,66,0.12)"/>
+  <line x1="368" y1="84" x2="368" y2="456" stroke="rgba(45,49,66,0.12)"/>
+  <line x1="504" y1="84" x2="504" y2="456" stroke="rgba(45,49,66,0.12)"/>
+  <line x1="640" y1="84" x2="640" y2="456" stroke="rgba(45,49,66,0.12)"/>
+  <line x1="776" y1="84" x2="776" y2="456" stroke="rgba(45,49,66,0.12)"/>
+  <line x1="912" y1="84" x2="912" y2="456" stroke="rgba(45,49,66,0.12)"/>
+  <text x="56" y="115" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" fill="#2d3142" text-anchor="start" font-weight="600">torch.compile</text>
+  <rect x="238" y="97" width="532" height="28" rx="4" fill="#ececec" stroke="#2d3142" stroke-width="1"/>
+  <text x="248" y="115" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="start">Dynamo → FX → AOTAutograd → Inductor → Triton / C++</text>
+  <text x="56" y="159" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" fill="#2d3142" text-anchor="start" font-weight="600">XLA</text>
+  <rect x="374" y="141" width="532" height="28" rx="4" fill="#ececec" stroke="#2d3142" stroke-width="1"/>
+  <text x="384" y="159" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="start">HLO → fusion passes → LLVM codegen (CPU, GPU) · TPU backend</text>
+  <text x="56" y="203" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" fill="#2d3142" text-anchor="start" font-weight="600">TVM</text>
+  <rect x="374" y="185" width="532" height="28" rx="4" fill="#ececec" stroke="#2d3142" stroke-width="1"/>
+  <text x="384" y="203" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="start">Relay / Relax → TensorIR + auto-tuning → LLVM, CUDA, … → runtime</text>
+  <text x="56" y="247" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" fill="#2d3142" text-anchor="start" font-weight="600">MLIR / IREE</text>
+  <rect x="374" y="229" width="532" height="28" rx="4" fill="#ececec" stroke="#2d3142" stroke-width="1"/>
+  <text x="384" y="247" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="start">MLIR dialects: linalg → vector, gpu → LLVM, SPIR-V · IREE runtime</text>
+  <text x="56" y="291" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" fill="#2d3142" text-anchor="start" font-weight="600">Triton</text>
+  <rect x="510" y="273" width="260" height="28" rx="4" fill="#ececec" stroke="#2d3142" stroke-width="1"/>
+  <text x="520" y="291" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="start">block programs → MLIR → PTX</text>
+  <text x="56" y="335" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" fill="#2d3142" text-anchor="start" font-weight="600">Halide</text>
+  <rect x="510" y="317" width="260" height="28" rx="4" fill="#ececec" stroke="#2d3142" stroke-width="1"/>
+  <text x="520" y="335" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="start">algorithm + schedule → LLVM</text>
+  <text x="56" y="379" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" fill="#2d3142" text-anchor="start" font-weight="600">tinygrad</text>
+  <rect x="238" y="361" width="668" height="28" rx="4" fill="#ececec" stroke="#2d3142" stroke-width="1"/>
+  <text x="248" y="379" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="start">lazy Tensor → UOp graph → rewrite rules → BEAM → C, CUDA, Metal, AMD, …</text>
+  <text x="56" y="423" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" fill="#bf4520" text-anchor="start" font-weight="600">uopc</text>
+  <rect x="238" y="405" width="668" height="28" rx="4" fill="rgba(191,69,32,0.08)" stroke="#bf4520" stroke-width="1.4"/>
+  <text x="248" y="423" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#bf4520" text-anchor="start">Tensor → UOp → kernelize → rangeify → linearize → C / CUDA → ctypes</text>
+  <text x="56" y="492" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="16" fill="#4f5d75" text-anchor="start">Every system does the same five jobs; they disagree about where the boundaries go.</text>
+</svg>

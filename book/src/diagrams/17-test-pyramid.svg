@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" role="img" aria-labelledby="ch17-pyramid-title ch17-pyramid-desc">
+  <title id="ch17-pyramid-title">The uopc test pyramid</title>
+  <desc id="ch17-pyramid-desc">Five layers of tests from fast IR and algebra unit tests at the base, through loop programs, shape graphs and kernels, tensor ops and gradients, to end-to-end model training at the apex, each with its oracle and measured run time.</desc>
+  <defs>
+    <marker id="ch17-pyramid-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/>
+    </marker>
+    <marker id="ch17-pyramid-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#bf4520"/>
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f5f5f5"/>
+  <polygon points="444.0,64 516.0,64 577.2,132 382.8,132" fill="rgba(191,69,32,0.08)" stroke="#bf4520" stroke-width="1.4"/>
+  <text x="480" y="102.0" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" fill="#2d3142" text-anchor="middle" font-weight="600">Models</text>
+  <text x="601.2" y="102.0" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#bf4520" text-anchor="start">w09 · 7.2 s</text>
+  <polygon points="382.8,132 577.2,132 638.4,200 321.6,200" fill="#ececec" stroke="#2d3142" stroke-width="1"/>
+  <text x="480" y="164.0" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" fill="#2d3142" text-anchor="middle" font-weight="600">Tensor ops + gradients</text>
+  <text x="480" y="182.0" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">numpy · finite differences</text>
+  <text x="662.4" y="170.0" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="start">w05 · 1.5 s</text>
+  <polygon points="321.6,200 638.4,200 699.6,268 260.4,268" fill="#f5f5f5" stroke="#2d3142" stroke-width="1"/>
+  <text x="480" y="232.0" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" fill="#2d3142" text-anchor="middle" font-weight="600">Shape graphs → kernels</text>
+  <text x="480" y="250.0" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">random movement chains · opts · emulator</text>
+  <text x="723.6" y="238.0" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="start">w04 w06 w07 · 1.2 s</text>
+  <polygon points="260.4,268 699.6,268 760.8,336 199.2,336" fill="#ececec" stroke="#2d3142" stroke-width="1"/>
+  <text x="480" y="300.0" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" fill="#2d3142" text-anchor="middle" font-weight="600">Loop programs → C</text>
+  <text x="480" y="318.0" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">hand-written IR vs numpy</text>
+  <text x="784.8" y="306.0" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="start">w02 w03 · 0.5 s</text>
+  <polygon points="199.2,336 760.8,336 822.0,404 138.0,404" fill="#f5f5f5" stroke="#2d3142" stroke-width="1"/>
+  <text x="480" y="368.0" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" fill="#2d3142" text-anchor="middle" font-weight="600">IR, rewriting, algebra</text>
+  <text x="480" y="386.0" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">identities · const folding · round trips</text>
+  <text x="846.0" y="374.0" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="start">w01 · 1.2 s</text>
+  <text x="358.8" y="102.0" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="end">tiny GPT trains · causal mask</text>
+  <path d="M 96 404 V 72" stroke="#4f5d75" stroke-width="1.2" fill="none" marker-end="url(#ch17-pyramid-arrow)"/>
+  <text x="96" y="56" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="middle" letter-spacing="0.12em">SLOWER · BROADER</text>
+  <text x="96" y="426" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="middle" letter-spacing="0.12em">FASTER · SHARPER</text>
+  <text x="480" y="452" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="16" fill="#4f5d75" text-anchor="middle">Each layer catches what the one below cannot see; each failure points at a smaller place.</text>
+</svg>

@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 440" role="img" aria-labelledby="ch15-kv-title ch15-kv-desc">
+  <title id="ch15-kv-title">A fixed-capacity KV cache at decode step pos = 7</title>
+  <desc id="ch15-kv-desc">Twelve cache slots: slots 0 to 6 hold earlier keys and values, slot 7 receives the new token's key and value; today every step attends over all twelve slots and masks slots 8 to 11, while a symbolic loop end would stop at slot 7.</desc>
+  <defs>
+    <marker id="ch15-kv-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/>
+    </marker>
+    <marker id="ch15-kv-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#bf4520"/>
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f5f5f5"/>
+  <path d="M 649.0 106 V 146" stroke="#bf4520" stroke-width="1.2" fill="none" marker-end="url(#ch15-kv-arrow-accent)"/>
+  <rect x="549.0" y="50" width="200" height="56" rx="6" fill="#f5f5f5"/>
+  <rect x="549.0" y="50" width="200" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142" stroke-width="1"/>
+  <text x="649.0" y="74.0" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" fill="#2d3142" text-anchor="middle" font-weight="600">token at pos = 7</text>
+  <text x="649.0" y="92.0" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">k, v = x·Wk, x·Wv</text>
+  <text x="40" y="170" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" fill="#2d3142" text-anchor="start" font-weight="600">K, V cache</text>
+  <text x="40" y="188" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="start">Tmax = 12 slots</text>
+  <rect x="232" y="150" width="50" height="40" rx="4" fill="#ececec" stroke="#2d3142"/>
+  <text x="257.0" y="174" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">kv</text>
+  <text x="257.0" y="210" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="middle">0</text>
+  <rect x="288" y="150" width="50" height="40" rx="4" fill="#ececec" stroke="#2d3142"/>
+  <text x="313.0" y="174" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">kv</text>
+  <text x="313.0" y="210" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="middle">1</text>
+  <rect x="344" y="150" width="50" height="40" rx="4" fill="#ececec" stroke="#2d3142"/>
+  <text x="369.0" y="174" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">kv</text>
+  <text x="369.0" y="210" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="middle">2</text>
+  <rect x="400" y="150" width="50" height="40" rx="4" fill="#ececec" stroke="#2d3142"/>
+  <text x="425.0" y="174" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">kv</text>
+  <text x="425.0" y="210" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="middle">3</text>
+  <rect x="456" y="150" width="50" height="40" rx="4" fill="#ececec" stroke="#2d3142"/>
+  <text x="481.0" y="174" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">kv</text>
+  <text x="481.0" y="210" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="middle">4</text>
+  <rect x="512" y="150" width="50" height="40" rx="4" fill="#ececec" stroke="#2d3142"/>
+  <text x="537.0" y="174" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">kv</text>
+  <text x="537.0" y="210" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="middle">5</text>
+  <rect x="568" y="150" width="50" height="40" rx="4" fill="#ececec" stroke="#2d3142"/>
+  <text x="593.0" y="174" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">kv</text>
+  <text x="593.0" y="210" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="middle">6</text>
+  <rect x="624" y="150" width="50" height="40" rx="4" fill="rgba(191,69,32,0.08)" stroke="#bf4520" stroke-width="1.4"/>
+  <text x="649.0" y="174" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#bf4520" text-anchor="middle">new</text>
+  <text x="649.0" y="210" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="middle">7</text>
+  <rect x="680" y="150" width="50" height="40" rx="4" fill="none" stroke="#5a6580" stroke-dasharray="4,3"/>
+  <text x="705.0" y="210" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="middle">8</text>
+  <rect x="736" y="150" width="50" height="40" rx="4" fill="none" stroke="#5a6580" stroke-dasharray="4,3"/>
+  <text x="761.0" y="210" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="middle">9</text>
+  <rect x="792" y="150" width="50" height="40" rx="4" fill="none" stroke="#5a6580" stroke-dasharray="4,3"/>
+  <text x="817.0" y="210" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="middle">10</text>
+  <rect x="848" y="150" width="50" height="40" rx="4" fill="none" stroke="#5a6580" stroke-dasharray="4,3"/>
+  <text x="873.0" y="210" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="middle">11</text>
+  <text x="40" y="258" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" fill="#2d3142" text-anchor="start" font-weight="600">today</text>
+  <text x="40" y="276" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="start">mask, Tmax wide</text>
+  <rect x="232" y="246" width="442" height="30" rx="4" fill="#f5f5f5" stroke="#2d3142"/>
+  <text x="453.0" y="266" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">softmax over slots 0 … pos</text>
+  <rect x="680" y="246" width="218" height="30" rx="4" fill="none" stroke="#5a6580" stroke-dasharray="4,3"/>
+  <text x="789.0" y="266" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="middle">-1e9: computed, discarded</text>
+  <text x="40" y="336" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" fill="#2d3142" text-anchor="start" font-weight="600">symbolic</text>
+  <text x="40" y="354" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="start">RANGE(end = pos + 1)</text>
+  <rect x="232" y="324" width="442" height="30" rx="4" fill="#f5f5f5" stroke="#2d3142"/>
+  <text x="453.0" y="344" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">loop j &lt; pos + 1</text>
+  <text x="789.0" y="344" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="middle">never touched</text>
+  <text x="40" y="412" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="16" fill="#4f5d75" text-anchor="start">Per token: Θ(Tmax·D) work with a mask; Θ(pos·D) with a symbolic loop end.</text>
+</svg>

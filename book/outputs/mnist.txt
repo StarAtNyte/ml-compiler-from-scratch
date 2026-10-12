@@ -1,0 +1,8 @@
+step    0  loss 2.3134  460.7 ms/step
+step  100  loss 0.3881  22.3 ms/step
+step  200  loss 0.3272  19.0 ms/step
+step  300  loss 0.2496  17.6 ms/step
+step  400  loss 0.2643  16.0 ms/step
+step  500  loss 0.2517  15.0 ms/step
+step  599  loss 0.2162  14.4 ms/step
+test accuracy 94.06%

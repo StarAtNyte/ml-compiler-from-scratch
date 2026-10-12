@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 580" role="img" aria-labelledby="08-reverse-mode-title 08-reverse-mode-desc">
+  <title id="08-reverse-mode-title">Reverse mode on L = sum(x * y + x)</title>
+  <desc id="08-reverse-mode-desc">The forward graph computes m = x*y, a = m + x and L = sum(a); the gradient graph runs backward from a seed of 1, and because x is used twice its gradient is the sum of two contributions, 1 + y.</desc>
+  <defs>
+    <marker id="08-reverse-mode-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+    <marker id="08-reverse-mode-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#bf4520"/></marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f5f5f5"/>
+
+  <!-- zones -->
+  <rect x="24" y="24" width="912" height="236" rx="8" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.12)"/>
+  <text x="40" y="46" text-anchor="start" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" letter-spacing="0.12em">FORWARD · VALUES</text>
+  <rect x="24" y="284" width="912" height="272" rx="8" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.12)"/>
+  <text x="40" y="306" text-anchor="start" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" letter-spacing="0.12em">BACKWARD · GRADIENTS</text>
+
+  <!-- connectors (before boxes) -->
+  <path d="M 220 88 L 520 88" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#08-reverse-mode-arrow)"/>
+  <path d="M 220 108 L 382 108 Q 390 108 390 116 L 390 164" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#08-reverse-mode-arrow)"/>
+  <path d="M 220 192 L 300 192" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#08-reverse-mode-arrow)"/>
+  <path d="M 480 192 L 602 192 Q 610 192 610 184 L 610 120" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#08-reverse-mode-arrow)"/>
+  <path d="M 700 92 L 736 92" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#08-reverse-mode-arrow)"/>
+  <path d="M 826 120 L 826 344 Q 826 352 818 352 L 700 352" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#08-reverse-mode-arrow)"/>
+  <path d="M 520 342 L 220 342" fill="none" stroke="#bf4520" stroke-width="1.2" marker-end="url(#08-reverse-mode-arrow-accent)"/>
+  <path d="M 610 380 L 610 444 Q 610 452 602 452 L 480 452" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#08-reverse-mode-arrow)"/>
+  <path d="M 390 424 L 390 374 Q 390 366 382 366 L 220 366" fill="none" stroke="#bf4520" stroke-width="1.2" marker-end="url(#08-reverse-mode-arrow-accent)"/>
+  <path d="M 300 462 L 220 462" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#08-reverse-mode-arrow)"/>
+
+  <!-- labels -->
+  <rect x="335.1" y="66" width="89.8" height="17" rx="2" fill="#f5f5f5"/>
+  <text x="380" y="78" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" letter-spacing="0.04em">x used twice</text>
+  <rect x="834.0" y="288" width="48.9" height="17" rx="2" fill="#f5f5f5"/>
+  <text x="838" y="300" text-anchor="start" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" letter-spacing="0.04em">seed 1</text>
+  <rect x="355.5" y="318" width="48.9" height="17" rx="2" fill="#f5f5f5"/>
+  <text x="380" y="330" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#bf4520" letter-spacing="0.04em">ADD: g</text>
+  <rect x="520.5" y="428" width="48.9" height="17" rx="2" fill="#f5f5f5"/>
+  <text x="545" y="440" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" letter-spacing="0.04em">ADD: g</text>
+  <rect x="261.9" y="374" width="76.2" height="17" rx="2" fill="#f5f5f5"/>
+  <text x="300" y="386" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#bf4520" letter-spacing="0.04em">MUL: g · y</text>
+  <rect x="221.9" y="470" width="76.2" height="17" rx="2" fill="#f5f5f5"/>
+  <text x="260" y="482" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" letter-spacing="0.04em">MUL: g · x</text>
+
+  <!-- nodes -->
+  <rect x="40" y="64" width="180" height="56" rx="6" fill="#f5f5f5"/>
+  <rect x="40" y="64" width="180" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+  <text x="130.0" y="88.0" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">x</text>
+  <text x="130.0" y="106.0" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">BUFFER</text>
+  <rect x="40" y="164" width="180" height="56" rx="6" fill="#f5f5f5"/>
+  <rect x="40" y="164" width="180" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+  <text x="130.0" y="188.0" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">y</text>
+  <text x="130.0" y="206.0" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">BUFFER</text>
+  <rect x="300" y="164" width="180" height="56" rx="6" fill="#f5f5f5"/>
+  <rect x="300" y="164" width="180" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+  <text x="390.0" y="188.0" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">MUL</text>
+  <text x="390.0" y="206.0" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">m = x · y</text>
+  <rect x="520" y="64" width="180" height="56" rx="6" fill="#f5f5f5"/>
+  <rect x="520" y="64" width="180" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+  <text x="610.0" y="88.0" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">ADD</text>
+  <text x="610.0" y="106.0" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">a = m + x</text>
+  <rect x="736" y="64" width="180" height="56" rx="6" fill="#f5f5f5"/>
+  <rect x="736" y="64" width="180" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+  <text x="826.0" y="88.0" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">REDUCE ADD</text>
+  <text x="826.0" y="106.0" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">L = sum(a)</text>
+  <rect x="520" y="324" width="180" height="56" rx="6" fill="#f5f5f5"/>
+  <rect x="520" y="324" width="180" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+  <text x="610.0" y="348.0" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">dL/da</text>
+  <text x="610.0" y="366.0" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">expand(1)</text>
+  <rect x="300" y="424" width="180" height="56" rx="6" fill="#f5f5f5"/>
+  <rect x="300" y="424" width="180" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+  <text x="390.0" y="448.0" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">dL/dm</text>
+  <text x="390.0" y="466.0" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">= dL/da</text>
+  <rect x="40" y="324" width="180" height="56" rx="6" fill="#f5f5f5"/>
+  <rect x="40" y="324" width="180" height="56" rx="6" fill="rgba(191,69,32,0.08)" stroke="#bf4520" stroke-width="1.4"/>
+  <text x="130.0" y="348.0" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">dL/dx</text>
+  <text x="130.0" y="366.0" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#bf4520">1 + y</text>
+  <rect x="40" y="424" width="180" height="56" rx="6" fill="#f5f5f5"/>
+  <rect x="40" y="424" width="180" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+  <text x="130.0" y="448.0" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">dL/dy</text>
+  <text x="130.0" y="466.0" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">x</text>
+
+  <!-- annotations -->
+  <text x="560" y="520" text-anchor="start" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="16" fill="#4f5d75">x has two consumers, so dL/dx is the sum</text>
+  <text x="560" y="540" text-anchor="start" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="16" fill="#4f5d75">of what both paths send back</text>
+</svg>

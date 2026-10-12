@@ -1,0 +1,19 @@
+[project]
+name = "uopc"
+version = "0.1.0"
+description = "A machine learning compiler built from scratch, one week at a time"
+requires-python = ">=3.11"
+dependencies = ["numpy"]
+
+[project.optional-dependencies]
+dev = ["pytest", "markdown", "pygments"]
+
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["uopc"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 490" role="img" aria-labelledby="07-plan-title 07-plan-desc">
+  <title id="07-plan-title">A softmax Plan: kernels over buffer lanes</title>
+  <desc id="07-plan-desc">Three kernels run in order; each reads and writes buffers referred to as in, tmp and out; the two temporaries live from the kernel that writes them to the last kernel that reads them.</desc>
+  <defs>
+    <marker id="07-plan-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+    <marker id="07-plan-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#bf4520"/></marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f5f5f5"/>
+
+  <!-- zones -->
+  <rect x="40" y="24" width="880" height="444" rx="8" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.12)"/>
+
+  <!-- connectors (before boxes) -->
+
+  <!-- labels -->
+
+  <!-- nodes -->
+  <rect x="320" y="68" width="160" height="56" rx="6" fill="#f5f5f5"/>
+  <rect x="320" y="68" width="160" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+  <text x="400.0" y="92.0" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="14" font-weight="600" fill="#2d3142">r_4</text>
+  <text x="400.0" y="110.0" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">row max</text>
+  <rect x="520" y="68" width="160" height="56" rx="6" fill="#f5f5f5"/>
+  <rect x="520" y="68" width="160" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+  <text x="600.0" y="92.0" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="14" font-weight="600" fill="#2d3142">r_4</text>
+  <text x="600.0" y="110.0" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">row sum of exp</text>
+  <rect x="720" y="68" width="160" height="56" rx="6" fill="#f5f5f5"/>
+  <rect x="720" y="68" width="160" height="56" rx="6" fill="rgba(191,69,32,0.08)" stroke="#bf4520" stroke-width="1.4"/>
+  <text x="800.0" y="92.0" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="14" font-weight="600" fill="#2d3142">e_4_8</text>
+  <text x="800.0" y="110.0" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#bf4520">exp · 1/sum</text>
+
+  <!-- annotations -->
+  <text x="64" y="52" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" letter-spacing="0.12em">BUFFERS</text>
+  <text x="896" y="52" text-anchor="end" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" letter-spacing="0.12em">KERNELS IN SCHEDULE ORDER →</text>
+  <line x1="400" y1="124" x2="400" y2="412" stroke="rgba(45,49,66,0.12)" stroke-width="1.2" stroke-dasharray="4,4"/>
+  <line x1="600" y1="124" x2="600" y2="412" stroke="rgba(45,49,66,0.12)" stroke-width="1.2" stroke-dasharray="4,4"/>
+  <line x1="800" y1="124" x2="800" y2="412" stroke="rgba(45,49,66,0.12)" stroke-width="1.2" stroke-dasharray="4,4"/>
+  <text x="64" y="166" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">in 0</text>
+  <text x="64" y="182" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">x · caller's buffer</text>
+  <line x1="300" y1="168" x2="896" y2="168" stroke="rgba(45,49,66,0.12)" stroke-width="1"/>
+  <text x="64" y="238" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">tmp 0</text>
+  <text x="64" y="254" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">row max · temp_arrays[0]</text>
+  <line x1="300" y1="240" x2="896" y2="240" stroke="rgba(45,49,66,0.12)" stroke-width="1"/>
+  <text x="64" y="310" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">tmp 1</text>
+  <text x="64" y="326" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">row sum · temp_arrays[1]</text>
+  <line x1="300" y1="312" x2="896" y2="312" stroke="rgba(45,49,66,0.12)" stroke-width="1"/>
+  <text x="64" y="382" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">out 0</text>
+  <text x="64" y="398" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">result · new_buffer</text>
+  <line x1="300" y1="384" x2="896" y2="384" stroke="rgba(45,49,66,0.12)" stroke-width="1"/>
+  <rect x="300" y="161" width="596" height="14" rx="4" fill="rgba(45,49,66,0.08)" stroke="none"/>
+  <rect x="400" y="233" width="400" height="14" rx="4" fill="rgba(45,49,66,0.08)" stroke="none"/>
+  <rect x="600" y="305" width="200" height="14" rx="4" fill="rgba(45,49,66,0.08)" stroke="none"/>
+  <rect x="800" y="377" width="96" height="14" rx="4" fill="rgba(45,49,66,0.08)" stroke="none"/>
+  <circle cx="400" cy="168" r="7" fill="#f5f5f5" stroke="#2d3142" stroke-width="1.4"/>
+  <circle cx="600" cy="168" r="7" fill="#f5f5f5" stroke="#2d3142" stroke-width="1.4"/>
+  <circle cx="800" cy="168" r="7" fill="#f5f5f5" stroke="#2d3142" stroke-width="1.4"/>
+  <circle cx="400" cy="240" r="7" fill="#2d3142"/>
+  <circle cx="600" cy="240" r="7" fill="#f5f5f5" stroke="#2d3142" stroke-width="1.4"/>
+  <circle cx="800" cy="240" r="7" fill="#f5f5f5" stroke="#2d3142" stroke-width="1.4"/>
+  <circle cx="600" cy="312" r="7" fill="#2d3142"/>
+  <circle cx="800" cy="312" r="7" fill="#f5f5f5" stroke="#2d3142" stroke-width="1.4"/>
+  <circle cx="800" cy="384" r="7" fill="#2d3142"/>
+  <line x1="64" y1="420" x2="896" y2="420" stroke="rgba(45,49,66,0.12)" stroke-width="0.8"/>
+  <circle cx="72" cy="437" r="7" fill="#f5f5f5" stroke="#2d3142" stroke-width="1.4"/>
+  <text x="86" y="441" text-anchor="start" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">read</text>
+  <circle cx="152" cy="437" r="7" fill="#2d3142"/>
+  <text x="166" y="441" text-anchor="start" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">write</text>
+  <rect x="232" y="430" width="36" height="14" rx="4" fill="rgba(45,49,66,0.08)"/>
+  <text x="276" y="441" text-anchor="start" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">buffer alive</text>
+  <text x="896" y="441" text-anchor="end" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#bf4520">e_4_8.refs = [in 0, tmp 0, tmp 1, out 0]</text>
+</svg>

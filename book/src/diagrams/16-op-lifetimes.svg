@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" role="img" aria-labelledby="ch16-lifetimes-title ch16-lifetimes-desc">
+  <title id="ch16-lifetimes-title">Which ops exist at which stage of uopc</title>
+  <desc id="ch16-lifetimes-desc">Op families against four pipeline stages: shape ops, STACK, STAGE and CALL live only before rangeify; memory and loop ops appear only after it; constants, ALU ops and buffers survive to the rendered C; WMMA is reserved and never produced.</desc>
+  <defs>
+    <marker id="ch16-lifetimes-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/>
+    </marker>
+    <marker id="ch16-lifetimes-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#bf4520"/>
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f5f5f5"/>
+  <text x="391.0" y="72" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="middle" letter-spacing="0.08em">SHAPE GRAPH</text>
+  <text x="541.0" y="72" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="middle" letter-spacing="0.08em">KERNELIZE</text>
+  <text x="691.0" y="72" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#bf4520" text-anchor="middle" letter-spacing="0.08em">RANGEIFY</text>
+  <text x="841.0" y="72" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="middle" letter-spacing="0.08em">LINEARIZE · RENDER</text>
+  <line x1="316" y1="84" x2="316" y2="496" stroke="rgba(45,49,66,0.12)"/>
+  <line x1="466" y1="84" x2="466" y2="496" stroke="rgba(45,49,66,0.12)"/>
+  <line x1="766" y1="84" x2="766" y2="496" stroke="rgba(45,49,66,0.12)"/>
+  <line x1="916" y1="84" x2="916" y2="496" stroke="rgba(45,49,66,0.12)"/>
+  <line x1="616" y1="84" x2="616" y2="496" stroke="#bf4520" stroke-width="1.2" stroke-dasharray="5,4"/>
+  <text x="40" y="109" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142" text-anchor="start">CONST · ALU ops</text>
+  <rect x="322" y="92" width="588" height="24" rx="4" fill="#ececec" stroke="#2d3142"/>
+  <text x="616.0" y="108" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">become C expressions</text>
+  <text x="40" y="145" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142" text-anchor="start">BUFFER</text>
+  <rect x="322" y="128" width="588" height="24" rx="4" fill="#ececec" stroke="#2d3142"/>
+  <text x="616.0" y="144" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">become kernel parameters</text>
+  <text x="40" y="181" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142" text-anchor="start">PARAM · CALL</text>
+  <rect x="322" y="164" width="138" height="24" rx="4" fill="#ececec" stroke="#2d3142"/>
+  <text x="391.0" y="180" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">inlined by run()</text>
+  <text x="40" y="217" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142" text-anchor="start">STACK · INDEX (values)</text>
+  <rect x="322" y="200" width="288" height="24" rx="4" fill="#ececec" stroke="#2d3142"/>
+  <text x="466.0" y="216" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">→ WHERE chains, index math</text>
+  <text x="40" y="253" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142" text-anchor="start">RESHAPE · EXPAND · PERMUTE · SHRINK</text>
+  <rect x="322" y="236" width="288" height="24" rx="4" fill="#ececec" stroke="#2d3142"/>
+  <text x="466.0" y="252" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">→ index arithmetic</text>
+  <text x="40" y="289" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142" text-anchor="start">REDUCE</text>
+  <rect x="322" y="272" width="288" height="24" rx="4" fill="#ececec" stroke="#2d3142"/>
+  <text x="466.0" y="288" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">→ accumulator + loop</text>
+  <text x="40" y="325" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142" text-anchor="start">STAGE</text>
+  <rect x="322" y="308" width="138" height="24" rx="4" fill="#ececec" stroke="#2d3142"/>
+  <text x="391.0" y="324" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">cut by kernelize</text>
+  <text x="40" y="361" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142" text-anchor="start">ALLOC · INDEX · LOAD · STORE · AFTER</text>
+  <rect x="622" y="344" width="288" height="24" rx="4" fill="#ececec" stroke="#2d3142"/>
+  <text x="766.0" y="360" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">made by rangeify</text>
+  <text x="40" y="397" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142" text-anchor="start">RANGE · END · SINK</text>
+  <rect x="622" y="380" width="288" height="24" rx="4" fill="#ececec" stroke="#2d3142"/>
+  <text x="766.0" y="396" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">one RANGE per axis</text>
+  <text x="40" y="433" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142" text-anchor="start">BARRIER</text>
+  <rect x="622" y="416" width="288" height="24" rx="4" fill="#ececec" stroke="#2d3142"/>
+  <text x="766.0" y="432" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">hand-written GPU IR only</text>
+  <text x="40" y="469" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142" text-anchor="start">WMMA</text>
+  <rect x="322" y="452" width="588" height="24" rx="4" fill="#f5f5f5" stroke="#5a6580" stroke-dasharray="4,3"/>
+  <text x="616.0" y="468" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" text-anchor="middle">reserved: never produced, no renderer</text>
+  <text x="40" y="530" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="16" fill="#4f5d75" text-anchor="start">Rangeify is the great divide: shapes to its left, loops and memory to its right.</text>
+</svg>

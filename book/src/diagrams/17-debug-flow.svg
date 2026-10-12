@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 500" role="img" aria-labelledby="ch17-debug-title ch17-debug-desc">
+  <title id="ch17-debug-title">Triage when a check fails</title>
+  <desc id="ch17-debug-desc">A failing check is classified as a build-time crash, wrong numbers, or a slowdown; each branch has its own first tool (the type checker message, shrinking and bisecting the pipeline, per-kernel timing), and every branch ends by freezing the bug as a regression test.</desc>
+  <defs>
+    <marker id="ch17-debug-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/>
+    </marker>
+    <marker id="ch17-debug-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#bf4520"/>
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f5f5f5"/>
+  <path d="M 440 96 V 110 Q 440 118 432 118 H 208 Q 200 118 200 126 V 148" stroke="#4f5d75" stroke-width="1.2" fill="none" marker-end="url(#ch17-debug-arrow)"/>
+  <path d="M 480 96 V 148" stroke="#4f5d75" stroke-width="1.2" fill="none" marker-end="url(#ch17-debug-arrow)"/>
+  <path d="M 520 96 V 110 Q 520 118 528 118 H 752 Q 760 118 760 126 V 148" stroke="#4f5d75" stroke-width="1.2" fill="none" marker-end="url(#ch17-debug-arrow)"/>
+  <path d="M 200 206 V 258" stroke="#4f5d75" stroke-width="1.2" fill="none" marker-end="url(#ch17-debug-arrow)"/>
+  <path d="M 480 206 V 258" stroke="#4f5d75" stroke-width="1.2" fill="none" marker-end="url(#ch17-debug-arrow)"/>
+  <path d="M 760 206 V 258" stroke="#4f5d75" stroke-width="1.2" fill="none" marker-end="url(#ch17-debug-arrow)"/>
+  <path d="M 480 316 V 368" stroke="#4f5d75" stroke-width="1.2" fill="none" marker-end="url(#ch17-debug-arrow)"/>
+  <path d="M 200 316 V 390 Q 200 398 208 398 H 358" stroke="#4f5d75" stroke-width="1.2" fill="none" marker-end="url(#ch17-debug-arrow)"/>
+  <path d="M 760 316 V 390 Q 760 398 752 398 H 602" stroke="#4f5d75" stroke-width="1.2" fill="none" marker-end="url(#ch17-debug-arrow)"/>
+  <rect x="360" y="40" width="240" height="56" rx="6" fill="#f5f5f5"/>
+  <rect x="360" y="40" width="240" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142" stroke-width="1"/>
+  <text x="480.0" y="64.0" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" fill="#2d3142" text-anchor="middle" font-weight="600">A check fails</text>
+  <text x="480.0" y="82.0" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">pytest · perf gate · eyeball</text>
+  <rect x="80.0" y="150" width="240" height="56" rx="6" fill="#f5f5f5"/>
+  <rect x="80.0" y="150" width="240" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142" stroke-width="1"/>
+  <text x="200.0" y="174.0" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" fill="#2d3142" text-anchor="middle" font-weight="600">Crash while building</text>
+  <text x="200.0" y="192.0" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">UOpError · CompileError</text>
+  <rect x="360.0" y="150" width="240" height="56" rx="6" fill="#f5f5f5"/>
+  <rect x="360.0" y="150" width="240" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142" stroke-width="1"/>
+  <text x="480.0" y="174.0" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" fill="#2d3142" text-anchor="middle" font-weight="600">Wrong numbers</text>
+  <text x="480.0" y="192.0" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">assert_allclose fails</text>
+  <rect x="640.0" y="150" width="240" height="56" rx="6" fill="#f5f5f5"/>
+  <rect x="640.0" y="150" width="240" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142" stroke-width="1"/>
+  <text x="760.0" y="174.0" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" fill="#2d3142" text-anchor="middle" font-weight="600">Too slow</text>
+  <text x="760.0" y="192.0" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">perf gate · step time</text>
+  <rect x="80.0" y="260" width="240" height="56" rx="6" fill="#f5f5f5"/>
+  <rect x="80.0" y="260" width="240" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142" stroke-width="1"/>
+  <text x="200.0" y="284.0" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" fill="#2d3142" text-anchor="middle" font-weight="600">Read the message</text>
+  <text x="200.0" y="302.0" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">_infer, or gcc + numbered C</text>
+  <rect x="360.0" y="260" width="240" height="56" rx="6" fill="#f5f5f5"/>
+  <rect x="360.0" y="260" width="240" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142" stroke-width="1"/>
+  <text x="480.0" y="284.0" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" fill="#2d3142" text-anchor="middle" font-weight="600">Shrink, then bisect</text>
+  <text x="480.0" y="302.0" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">OPT=0 · run() · lower()</text>
+  <rect x="640.0" y="260" width="240" height="56" rx="6" fill="#f5f5f5"/>
+  <rect x="640.0" y="260" width="240" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142" stroke-width="1"/>
+  <text x="760.0" y="284.0" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" fill="#2d3142" text-anchor="middle" font-weight="600">Time every kernel</text>
+  <text x="760.0" y="302.0" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75" text-anchor="middle">DEBUG=2 / DEBUG=3</text>
+  <rect x="360" y="370" width="240" height="56" rx="6" fill="#f5f5f5"/>
+  <rect x="360" y="370" width="240" height="56" rx="6" fill="rgba(191,69,32,0.08)" stroke="#bf4520" stroke-width="1.4"/>
+  <text x="480.0" y="394.0" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" fill="#2d3142" text-anchor="middle" font-weight="600">Freeze it as a test</text>
+  <text x="480.0" y="412.0" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#bf4520" text-anchor="middle">tests/test_wNN_*.py</text>
+  <text x="480" y="470" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="16" fill="#4f5d75" text-anchor="middle">A bug that is not a test yet is a bug you will meet again.</text>
+</svg>

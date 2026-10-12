@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 280" role="img" aria-labelledby="00-weeks-title 00-weeks-desc">
+  <title id="00-weeks-title">Fourteen weeks, chapter by chapter</title>
+  <desc id="00-weeks-desc">A timeline of the 14-week course: chapters 1-3 in week 1, chapter 4 in week 2, chapter 5 in week 3, chapter 6 in week 4, chapters 7-9 in week 5, chapters 10-11 in week 6, chapters 12-13 in weeks 7-8, chapters 14-15 in weeks 9-10 and projects after; milestones from compiling elementwise C in week 2 to training a GPT in week 10.</desc>
+  <defs>
+    <marker id="00-weeks-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/>
+    </marker>
+    <marker id="00-weeks-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#bf4520"/>
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f5f5f5"/>
+  <text x="32" y="40" text-anchor="start" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">CHAPTERS</text>
+  <rect x="30" y="60" width="60" height="32" rx="4" fill="#ececec" stroke="rgba(45,49,66,0.12)"/>
+  <text x="60.0" y="81" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">Ch 1–3</text>
+  <rect x="94" y="60" width="60" height="32" rx="4" fill="#ececec" stroke="rgba(45,49,66,0.12)"/>
+  <text x="124.0" y="81" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">Ch 4</text>
+  <rect x="158" y="60" width="60" height="32" rx="4" fill="#ececec" stroke="rgba(45,49,66,0.12)"/>
+  <text x="188.0" y="81" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">Ch 5</text>
+  <rect x="222" y="60" width="60" height="32" rx="4" fill="#ececec" stroke="rgba(45,49,66,0.12)"/>
+  <text x="252.0" y="81" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">Ch 6</text>
+  <rect x="286" y="60" width="60" height="32" rx="4" fill="#ececec" stroke="rgba(45,49,66,0.12)"/>
+  <text x="316.0" y="81" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">Ch 7–9</text>
+  <rect x="350" y="60" width="60" height="32" rx="4" fill="#ececec" stroke="rgba(45,49,66,0.12)"/>
+  <text x="380.0" y="81" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">Ch 10–11</text>
+  <rect x="414" y="60" width="124" height="32" rx="4" fill="#ececec" stroke="rgba(45,49,66,0.12)"/>
+  <text x="476.0" y="81" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">Ch 12–13</text>
+  <rect x="542" y="60" width="124" height="32" rx="4" fill="#ececec" stroke="rgba(45,49,66,0.12)"/>
+  <text x="604.0" y="81" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">Ch 14–15</text>
+  <rect x="670" y="60" width="252" height="32" rx="4" fill="#ececec" stroke="rgba(45,49,66,0.12)"/>
+  <text x="796.0" y="81" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">projects · Ch 15</text>
+  <line x1="30" y1="136" x2="922" y2="136" stroke="#2d3142" stroke-width="1"/>
+  <line x1="60" y1="131" x2="60" y2="141" stroke="#2d3142" stroke-width="1"/>
+  <text x="60" y="120" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">W1</text>
+  <line x1="124" y1="131" x2="124" y2="141" stroke="#2d3142" stroke-width="1"/>
+  <text x="124" y="120" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">W2</text>
+  <line x1="188" y1="131" x2="188" y2="141" stroke="#2d3142" stroke-width="1"/>
+  <text x="188" y="120" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">W3</text>
+  <line x1="252" y1="131" x2="252" y2="141" stroke="#2d3142" stroke-width="1"/>
+  <text x="252" y="120" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">W4</text>
+  <line x1="316" y1="131" x2="316" y2="141" stroke="#2d3142" stroke-width="1"/>
+  <text x="316" y="120" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">W5</text>
+  <line x1="380" y1="131" x2="380" y2="141" stroke="#2d3142" stroke-width="1"/>
+  <text x="380" y="120" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">W6</text>
+  <line x1="444" y1="131" x2="444" y2="141" stroke="#2d3142" stroke-width="1"/>
+  <text x="444" y="120" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">W7</text>
+  <line x1="508" y1="131" x2="508" y2="141" stroke="#2d3142" stroke-width="1"/>
+  <text x="508" y="120" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">W8</text>
+  <line x1="572" y1="131" x2="572" y2="141" stroke="#2d3142" stroke-width="1"/>
+  <text x="572" y="120" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">W9</text>
+  <line x1="636" y1="131" x2="636" y2="141" stroke="#2d3142" stroke-width="1"/>
+  <text x="636" y="120" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">W10</text>
+  <line x1="700" y1="131" x2="700" y2="141" stroke="#2d3142" stroke-width="1"/>
+  <text x="700" y="120" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">W11</text>
+  <line x1="764" y1="131" x2="764" y2="141" stroke="#2d3142" stroke-width="1"/>
+  <text x="764" y="120" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">W12</text>
+  <line x1="828" y1="131" x2="828" y2="141" stroke="#2d3142" stroke-width="1"/>
+  <text x="828" y="120" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">W13</text>
+  <line x1="892" y1="131" x2="892" y2="141" stroke="#2d3142" stroke-width="1"/>
+  <text x="892" y="120" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">W14</text>
+  <line x1="124" y1="142" x2="124" y2="170" stroke="#4f5d75" stroke-width="1"/>
+  <circle cx="124" cy="136" r="4" fill="#2d3142"/>
+  <text x="124" y="184" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="13" fill="#2d3142" font-weight="600">elementwise → C</text>
+  <line x1="252" y1="142" x2="252" y2="202" stroke="#4f5d75" stroke-width="1"/>
+  <circle cx="252" cy="136" r="4" fill="#2d3142"/>
+  <text x="252" y="216" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="13" fill="#2d3142" font-weight="600">any model → C</text>
+  <line x1="316" y1="142" x2="316" y2="170" stroke="#4f5d75" stroke-width="1"/>
+  <circle cx="316" cy="136" r="4" fill="#2d3142"/>
+  <text x="316" y="184" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="13" fill="#2d3142" font-weight="600">MNIST trains</text>
+  <line x1="380" y1="142" x2="380" y2="202" stroke="#4f5d75" stroke-width="1"/>
+  <circle cx="380" cy="136" r="4" fill="#2d3142"/>
+  <text x="380" y="216" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="13" fill="#2d3142" font-weight="600">fast CPU GEMM</text>
+  <line x1="508" y1="142" x2="508" y2="170" stroke="#4f5d75" stroke-width="1"/>
+  <circle cx="508" cy="136" r="4" fill="#2d3142"/>
+  <text x="508" y="184" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="13" fill="#2d3142" font-weight="600">CUDA kernels</text>
+  <line x1="636" y1="142" x2="636" y2="202" stroke="#4f5d75" stroke-width="1"/>
+  <circle cx="636" cy="136" r="6" fill="#bf4520"/>
+  <text x="636" y="216" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="13" fill="#bf4520" font-weight="600">a GPT trains</text>
+  <line x1="892" y1="142" x2="892" y2="170" stroke="#4f5d75" stroke-width="1"/>
+  <circle cx="892" cy="136" r="4" fill="#2d3142"/>
+  <text x="892" y="184" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="13" fill="#2d3142" font-weight="600">final project</text>
+  <text x="928" y="260" text-anchor="end" font-family="Instrument Serif, Georgia, serif" font-size="16" fill="#4f5d75" font-style="italic">each week calls every week before it</text>
+</svg>

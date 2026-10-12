@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" role="img" aria-labelledby="n3-title n3-desc">
+  <title id="n3-title">Where the softmax reductions land in fused attention</title>
+  <desc id="n3-desc">Loop nests of the fused attention kernel at N = 512, D = 64. Left, with indices simplified at every RESHAPE: per query row i, a max pass and a sum pass over keys, then four groups of output columns each with one pass over keys; 9.2 ms. Right, without the simplification: the max and sum passes over all keys are nested inside the loop over keys of the output, so they are recomputed for every key; 2211 ms.</desc>
+  <rect width="100%" height="100%" fill="#f5f5f5"/>
+  <text x="24" y="44" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">RESHAPE indices simplified</text>
+  <text x="24" y="62" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">accumulators sit in the loops their index uses</text>
+  <text x="452" y="44" text-anchor="end" font-family="Geist Mono, JetBrains Mono, monospace" font-size="12" fill="#2d3142">9.2 ms</text>
+  <rect x="24" y="80" width="428" height="300" rx="6" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.45)" stroke-width="1"/>
+  <text x="36" y="99" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">for i &lt; 512   (THREAD)</text>
+  <rect x="40" y="108" width="396" height="60" rx="6" fill="rgba(45,49,66,0.04)" stroke="rgba(45,49,66,0.45)" stroke-width="1"/>
+  <text x="52" y="127" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">for j &lt; 512</text>
+  <text x="424" y="127" text-anchor="end" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">max</text>
+  <rect x="200" y="132" width="220" height="28" rx="6" fill="rgba(45,49,66,0.06)" stroke="rgba(45,49,66,0.45)" stroke-width="1"/>
+  <text x="212" y="151" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">for e &lt; 64</text>
+  <text x="408" y="151" text-anchor="end" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">q·k</text>
+  <rect x="40" y="180" width="396" height="60" rx="6" fill="rgba(45,49,66,0.04)" stroke="rgba(45,49,66,0.45)" stroke-width="1"/>
+  <text x="52" y="199" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">for j &lt; 512</text>
+  <text x="424" y="199" text-anchor="end" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">sum</text>
+  <rect x="200" y="204" width="220" height="28" rx="6" fill="rgba(45,49,66,0.06)" stroke="rgba(45,49,66,0.45)" stroke-width="1"/>
+  <text x="212" y="223" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">for e &lt; 64</text>
+  <text x="408" y="223" text-anchor="end" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">q·k</text>
+  <rect x="40" y="252" width="396" height="112" rx="6" fill="rgba(45,49,66,0.04)" stroke="rgba(45,49,66,0.45)" stroke-width="1"/>
+  <text x="52" y="271" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">for c &lt; 4</text>
+  <text x="424" y="271" text-anchor="end" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">16 output columns</text>
+  <rect x="56" y="280" width="364" height="72" rx="6" fill="rgba(45,49,66,0.06)" stroke="rgba(45,49,66,0.45)" stroke-width="1"/>
+  <text x="68" y="299" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">for j &lt; 512</text>
+  <text x="408" y="299" text-anchor="end" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">p·v</text>
+  <rect x="200" y="312" width="204" height="28" rx="6" fill="rgba(45,49,66,0.08)" stroke="rgba(45,49,66,0.45)" stroke-width="1"/>
+  <text x="212" y="331" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">for e &lt; 64</text>
+  <text x="392" y="331" text-anchor="end" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">q·k</text>
+  <text x="508" y="44" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">unsimplified: ((i*N + j)//N) % N</text>
+  <text x="508" y="62" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">the index mentions j, so max and sum move inside j</text>
+  <text x="936" y="44" text-anchor="end" font-family="Geist Mono, JetBrains Mono, monospace" font-size="12" fill="#2d3142">2211 ms</text>
+  <rect x="508" y="80" width="428" height="300" rx="6" fill="rgba(45,49,66,0.02)" stroke="rgba(45,49,66,0.45)" stroke-width="1"/>
+  <text x="520" y="99" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">for i &lt; 512   (THREAD)</text>
+  <rect x="524" y="108" width="396" height="264" rx="6" fill="rgba(45,49,66,0.04)" stroke="rgba(45,49,66,0.45)" stroke-width="1"/>
+  <text x="536" y="127" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">for c &lt; 4</text>
+  <text x="908" y="127" text-anchor="end" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">16 output columns</text>
+  <rect x="540" y="136" width="364" height="224" rx="6" fill="rgba(45,49,66,0.06)" stroke="rgba(45,49,66,0.45)" stroke-width="1"/>
+  <text x="552" y="155" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">for j &lt; 512</text>
+  <text x="892" y="155" text-anchor="end" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">p·v</text>
+  <rect x="556" y="164" width="332" height="28" rx="6" fill="rgba(45,49,66,0.08)" stroke="rgba(45,49,66,0.45)" stroke-width="1"/>
+  <text x="568" y="183" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">for e &lt; 64</text>
+  <text x="876" y="183" text-anchor="end" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">q·k</text>
+  <rect x="556" y="204" width="332" height="68" rx="6" fill="rgba(191,69,32,0.08)" stroke="#bf4520" stroke-width="1.4"/>
+  <text x="568" y="223" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#bf4520">for j' &lt; 512</text>
+  <text x="876" y="223" text-anchor="end" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#bf4520">max, again</text>
+  <rect x="700" y="236" width="172" height="28" rx="6" fill="rgba(45,49,66,0.08)" stroke="rgba(45,49,66,0.45)" stroke-width="1"/>
+  <text x="712" y="255" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">for e &lt; 64</text>
+  <text x="860" y="255" text-anchor="end" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">q·k</text>
+  <rect x="556" y="284" width="332" height="68" rx="6" fill="rgba(191,69,32,0.08)" stroke="#bf4520" stroke-width="1.4"/>
+  <text x="568" y="303" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#bf4520">for j' &lt; 512</text>
+  <text x="876" y="303" text-anchor="end" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#bf4520">sum, again</text>
+  <rect x="700" y="316" width="172" height="28" rx="6" fill="rgba(45,49,66,0.08)" stroke="rgba(45,49,66,0.45)" stroke-width="1"/>
+  <text x="712" y="335" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">for e &lt; 64</text>
+  <text x="860" y="335" text-anchor="end" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">q·k</text>
+  <text x="24" y="406" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="16" fill="#4f5d75">same graph, same answer (max error 3.4e-07 both ways): one unsimplified index moved two loops inward</text>
+</svg>

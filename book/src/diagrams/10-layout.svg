@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 920 480" role="img" aria-labelledby="lay-title lay-desc">
+  <title id="lay-title">Strided versus contiguous reduce axis</title>
+  <desc id="lay-desc">Left: B stored row-major as K by N; the GEMM reduce walks down column j, so consecutive k are 4096 bytes apart and every step touches a new 64-byte cache line and a new 4 KB page, using 4 of its 64 bytes. Right: B transposed stored as N by K; the reduce walks along row j, consecutive k are adjacent, one cache line serves 16 steps and one 8-wide vector load serves 8.</desc>
+  <defs><marker id="lay-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#bf4520"/></marker></defs>
+  <rect width="100%" height="100%" fill="#f5f5f5"/>
+  <text x="60" y="66" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">B · row-major (K, N)</text>
+  <text x="60" y="86" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">reduce over k walks DOWN column j</text>
+  <rect x="60" y="120" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="144" y="120" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="228" y="120" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="312" y="120" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="184" y="124" width="6" height="20" fill="#bf4520"/>
+  <rect x="60" y="154" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="144" y="154" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="228" y="154" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="312" y="154" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="184" y="158" width="6" height="20" fill="#bf4520"/>
+  <rect x="60" y="188" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="144" y="188" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="228" y="188" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="312" y="188" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="184" y="192" width="6" height="20" fill="#bf4520"/>
+  <rect x="60" y="222" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="144" y="222" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="228" y="222" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="312" y="222" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="184" y="226" width="6" height="20" fill="#bf4520"/>
+  <rect x="60" y="256" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="144" y="256" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="228" y="256" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="312" y="256" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="184" y="260" width="6" height="20" fill="#bf4520"/>
+  <rect x="60" y="290" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="144" y="290" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="228" y="290" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="312" y="290" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="184" y="294" width="6" height="20" fill="#bf4520"/>
+  <rect x="60" y="324" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="144" y="324" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="228" y="324" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="312" y="324" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="184" y="328" width="6" height="20" fill="#bf4520"/>
+  <line x1="44" y1="120" x2="44" y2="350" stroke="#bf4520" stroke-width="1.4" marker-end="url(#lay-arrow)"/>
+  <text x="36" y="132" text-anchor="end" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#bf4520">k</text>
+  <text x="60" y="388" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">stride N*4 = 4096 B per k-step:</text>
+  <text x="60" y="406" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">a new 64 B line AND a new 4 KB page,</text>
+  <text x="60" y="424" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">no vector load can run along k</text>
+  <text x="404" y="138.0" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">one row = 4 KB</text>
+  <text x="520" y="66" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">Bᵀ · row-major (N, K)</text>
+  <text x="520" y="86" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">reduce over k walks ALONG row j</text>
+  <rect x="520" y="120" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="604" y="120" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="688" y="120" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="772" y="120" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="520" y="154" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="604" y="154" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="688" y="154" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="772" y="154" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="520" y="188" width="82" height="28" fill="rgba(191,69,32,0.08)" stroke="#bf4520" stroke-width="1.2"/>
+  <rect x="604" y="188" width="82" height="28" fill="rgba(191,69,32,0.08)" stroke="#bf4520" stroke-width="1.2"/>
+  <rect x="688" y="188" width="82" height="28" fill="rgba(191,69,32,0.08)" stroke="#bf4520" stroke-width="1.2"/>
+  <rect x="772" y="188" width="82" height="28" fill="rgba(191,69,32,0.08)" stroke="#bf4520" stroke-width="1.2"/>
+  <rect x="520" y="222" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="604" y="222" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="688" y="222" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="772" y="222" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="520" y="256" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="604" y="256" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="688" y="256" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="772" y="256" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="520" y="290" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="604" y="290" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="688" y="290" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="772" y="290" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="520" y="324" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="604" y="324" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="688" y="324" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <rect x="772" y="324" width="82" height="28" fill="#ffffff" stroke="rgba(45,49,66,0.45)" stroke-width="0.8"/>
+  <line x1="520" y1="110" x2="854" y2="110" stroke="#bf4520" stroke-width="1.4" marker-end="url(#lay-arrow)"/>
+  <text x="864" y="114" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#bf4520">k</text>
+  <text x="520" y="388" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">stride 4 B per k-step:</text>
+  <text x="520" y="406" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">one 64 B line serves 16 steps,</text>
+  <text x="520" y="424" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">one vector load serves 8</text>
+  <text x="561.0" y="206.0" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#bf4520">64 B line</text>
+  <text x="460" y="462" text-anchor="middle" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="16" fill="#4f5d75">same matrix, same math: 1.9 versus 8.0 GFLOP/s, one thread</text>
+</svg>

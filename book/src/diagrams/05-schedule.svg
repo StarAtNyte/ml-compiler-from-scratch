@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 610" role="img" aria-labelledby="05-schedule-title 05-schedule-desc">
+  <title id="05-schedule-title">One step of the linearizer</title>
+  <desc id="05-schedule-desc">Each iteration of the list scheduler first emits a ready node whose target equals the open loops, otherwise opens the next needed loop that no sibling's END blocks, otherwise closes the innermost loops with a ready END, and otherwise reports that the program cannot be scheduled.</desc>
+  <defs>
+    <marker id="05-schedule-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+    <marker id="05-schedule-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#bf4520"/></marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f5f5f5"/>
+  <!-- connectors -->
+  <path d="M270,96 V134" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#05-schedule-arrow)"/>
+  <path d="M270,224 V264" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#05-schedule-arrow)"/>
+  <path d="M270,354 V394" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#05-schedule-arrow)"/>
+  <path d="M270,484 V518" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#05-schedule-arrow)"/>
+  <path d="M400,180 H498" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#05-schedule-arrow)"/>
+  <path d="M400,310 H498" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#05-schedule-arrow)"/>
+  <path d="M400,440 H498" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#05-schedule-arrow)"/>
+  <path d="M720,180 H772 Q780,180 780,172 V90 Q780,82 772,82 H382" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#05-schedule-arrow)"/>
+  <path d="M720,310 H802 Q810,310 810,302 V76 Q810,68 802,68 H382" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#05-schedule-arrow)"/>
+  <path d="M720,440 H832 Q840,440 840,432 V62 Q840,54 832,54 H382" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#05-schedule-arrow)"/>
+  <rect x="283" y="238" width="30" height="15" rx="2" fill="#f5f5f5"/>
+  <text x="298" y="249" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" letter-spacing="0.06em">NO</text>
+  <rect x="283" y="368" width="30" height="15" rx="2" fill="#f5f5f5"/>
+  <text x="298" y="379" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" letter-spacing="0.06em">NO</text>
+  <rect x="283" y="495" width="30" height="15" rx="2" fill="#f5f5f5"/>
+  <text x="298" y="506" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" letter-spacing="0.06em">NO</text>
+  <rect x="431" y="157" width="36" height="15" rx="2" fill="#f5f5f5"/>
+  <text x="449" y="168" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" letter-spacing="0.06em">YES</text>
+  <rect x="431" y="287" width="36" height="15" rx="2" fill="#f5f5f5"/>
+  <text x="449" y="298" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" letter-spacing="0.06em">YES</text>
+  <rect x="431" y="417" width="36" height="15" rx="2" fill="#f5f5f5"/>
+  <text x="449" y="428" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" letter-spacing="0.06em">YES</text>
+  <!-- nodes -->
+  <rect x="160" y="40" width="220" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142" stroke-width="1"/>
+  <text x="270" y="64" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">cur = open loops</text>
+  <text x="270" y="82" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">tuple(stack)</text>
+  <polygon points="270,136 400,180 270,224 140,180" fill="#f5f5f5" stroke="#2d3142" stroke-width="1"/>
+  <text x="270" y="177" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">ready node with</text>
+  <text x="270" y="193" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">target == cur?</text>
+  <polygon points="270,266 400,310 270,354 140,310" fill="rgba(191,69,32,0.08)" stroke="#bf4520" stroke-width="1.4"/>
+  <text x="270" y="307" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">needed RANGE ready,</text>
+  <text x="270" y="323" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">no sibling END?</text>
+  <polygon points="270,396 400,440 270,484 140,440" fill="#f5f5f5" stroke="#2d3142" stroke-width="1"/>
+  <text x="270" y="437" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">ready END closes</text>
+  <text x="270" y="453" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#2d3142">innermost loops?</text>
+  <rect x="500" y="152" width="220" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142" stroke-width="1"/>
+  <text x="610" y="176" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">1 · emit</text>
+  <text x="610" y="194" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">pop heaps[cur]</text>
+  <rect x="500" y="282" width="220" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142" stroke-width="1"/>
+  <text x="610" y="306" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">2 · open a loop</text>
+  <text x="610" y="324" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">push smallest unblocked</text>
+  <rect x="500" y="412" width="220" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142" stroke-width="1"/>
+  <text x="610" y="436" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">3 · close loops</text>
+  <text x="610" y="454" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">pop the ENDed ranges</text>
+  <rect x="160" y="520" width="220" height="56" rx="6" fill="#f5f5f5" stroke="#4f5d75" stroke-width="1" stroke-dasharray="4,3"/>
+  <text x="270" y="544" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">LinearizeError</text>
+  <text x="270" y="562" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">open loops, stuck nodes</text>
+  <text x="500" y="532" text-anchor="start" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="16" fill="#4f5d75">emitting before opening is what hoists</text>
+  <text x="500" y="554" text-anchor="start" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="16" fill="#4f5d75">loop-invariant code out of inner loops</text>
+</svg>

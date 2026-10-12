@@ -1,0 +1,8 @@
+00 | Front matter
+01 | Part I: The IR
+04 | Part II: From graphs to machine code
+07 | Part III: A real compiler
+10 | Part IV: Making it fast
+12 | Part V: Accelerators
+14 | Part VI: Real models
+16 | Appendices

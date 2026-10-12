@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 590" role="img" aria-labelledby="gpu-hierarchy-title gpu-hierarchy-desc">
+  <title id="gpu-hierarchy-title">GPU execution and memory hierarchy</title>
+  <desc id="gpu-hierarchy-desc">A GPU contains many streaming multiprocessors sharing global memory and L2; each SM holds several resident thread blocks that share its shared memory; each block is split into warps of 32 lanes that execute one instruction at a time; each lane is a thread with private registers.</desc>
+  <rect width="100%" height="100%" fill="#f5f5f5"/>
+
+  <!-- level 1: device -->
+  <rect x="40" y="40" width="880" height="470" rx="8" fill="rgba(45,49,66,0.015)" stroke="rgba(45,49,66,0.30)"/>
+  <!-- level 2: SM -->
+  <rect x="64" y="84" width="648" height="402" rx="8" fill="rgba(45,49,66,0.02)" stroke="rgba(79,93,117,0.55)"/>
+  <!-- level 3: block -->
+  <rect x="88" y="128" width="440" height="334" rx="8" fill="rgba(45,49,66,0.025)" stroke="#4f5d75"/>
+  <!-- level 4: warp -->
+  <rect x="112" y="172" width="392" height="178" rx="8" fill="#f5f5f5" stroke="#2d3142"/>
+
+  <g font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" letter-spacing="0.12em">
+    <text x="60" y="64">GPU · GLOBAL MEMORY (HBM) + L2, SHARED BY ALL SMs</text>
+    <text x="84" y="108">STREAMING MULTIPROCESSOR 0 · REGISTER FILE + SHARED/L1</text>
+    <text x="108" y="152">THREAD BLOCK · SHARES __shared__ ARRAYS</text>
+    <text x="132" y="196" fill="#2d3142">WARP 0 · 32 LANES, ONE INSTRUCTION</text>
+  </g>
+
+  <!-- lanes: 2 rows x 16 -->
+  <g fill="#ececec" stroke="rgba(45,49,66,0.35)" stroke-width="0.8">
+    <rect x="132" y="212" width="18" height="18" rx="2" fill="rgba(191,69,32,0.12)" stroke="#bf4520" stroke-width="1.4"/>
+    <rect x="154" y="212" width="18" height="18" rx="2"/><rect x="176" y="212" width="18" height="18" rx="2"/>
+    <rect x="198" y="212" width="18" height="18" rx="2"/><rect x="220" y="212" width="18" height="18" rx="2"/>
+    <rect x="242" y="212" width="18" height="18" rx="2"/><rect x="264" y="212" width="18" height="18" rx="2"/>
+    <rect x="286" y="212" width="18" height="18" rx="2"/><rect x="308" y="212" width="18" height="18" rx="2"/>
+    <rect x="330" y="212" width="18" height="18" rx="2"/><rect x="352" y="212" width="18" height="18" rx="2"/>
+    <rect x="374" y="212" width="18" height="18" rx="2"/><rect x="396" y="212" width="18" height="18" rx="2"/>
+    <rect x="418" y="212" width="18" height="18" rx="2"/><rect x="440" y="212" width="18" height="18" rx="2"/>
+    <rect x="462" y="212" width="18" height="18" rx="2"/>
+    <rect x="132" y="236" width="18" height="18" rx="2"/><rect x="154" y="236" width="18" height="18" rx="2"/>
+    <rect x="176" y="236" width="18" height="18" rx="2"/><rect x="198" y="236" width="18" height="18" rx="2"/>
+    <rect x="220" y="236" width="18" height="18" rx="2"/><rect x="242" y="236" width="18" height="18" rx="2"/>
+    <rect x="264" y="236" width="18" height="18" rx="2"/><rect x="286" y="236" width="18" height="18" rx="2"/>
+    <rect x="308" y="236" width="18" height="18" rx="2"/><rect x="330" y="236" width="18" height="18" rx="2"/>
+    <rect x="352" y="236" width="18" height="18" rx="2"/><rect x="374" y="236" width="18" height="18" rx="2"/>
+    <rect x="396" y="236" width="18" height="18" rx="2"/><rect x="418" y="236" width="18" height="18" rx="2"/>
+    <rect x="440" y="236" width="18" height="18" rx="2"/><rect x="462" y="236" width="18" height="18" rx="2"/>
+  </g>
+  <g font-family="Geist, Inter, system-ui, sans-serif">
+    <text x="132" y="284" font-size="14" font-weight="600" fill="#bf4520">Lane 0 = one thread</text>
+    <text x="132" y="304" font-size="11" fill="#4f5d75" font-family="Geist Mono, JetBrains Mono, monospace">private registers: acc0, val3, alu1</text>
+    <text x="132" y="322" font-size="11" fill="#4f5d75" font-family="Geist Mono, JetBrains Mono, monospace">its own threadIdx, same instruction</text>
+
+    <!-- other warps in the block -->
+    <rect x="112" y="370" width="392" height="68" rx="6" fill="#f5f5f5" stroke="rgba(45,49,66,0.30)" stroke-dasharray="4,3"/>
+    <text x="308" y="398" text-anchor="middle" font-size="14" font-weight="600" fill="#4f5d75">Warps 1 … 7</text>
+    <text x="308" y="418" text-anchor="middle" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">a 256-thread block = 8 warps</text>
+
+    <!-- other resident blocks on the SM -->
+    <rect x="552" y="132" width="136" height="56" rx="6" fill="#f5f5f5" stroke="rgba(45,49,66,0.30)" stroke-dasharray="4,3"/>
+    <text x="620" y="156" text-anchor="middle" font-size="14" font-weight="600" fill="#4f5d75">Block 1</text>
+    <text x="620" y="174" text-anchor="middle" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">resident too</text>
+    <rect x="552" y="204" width="136" height="56" rx="6" fill="#f5f5f5" stroke="rgba(45,49,66,0.30)" stroke-dasharray="4,3"/>
+    <text x="620" y="228" text-anchor="middle" font-size="14" font-weight="600" fill="#4f5d75">Block 2</text>
+    <text x="620" y="246" text-anchor="middle" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">if resources fit</text>
+
+    <!-- other SMs -->
+    <rect x="736" y="84" width="160" height="56" rx="6" fill="#f5f5f5" stroke="rgba(45,49,66,0.30)" stroke-dasharray="4,3"/>
+    <text x="816" y="108" text-anchor="middle" font-size="14" font-weight="600" fill="#4f5d75">SM 1</text>
+    <text x="816" y="126" text-anchor="middle" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">same as SM 0</text>
+    <rect x="736" y="156" width="160" height="56" rx="6" fill="#f5f5f5" stroke="rgba(45,49,66,0.30)" stroke-dasharray="4,3"/>
+    <text x="816" y="180" text-anchor="middle" font-size="14" font-weight="600" fill="#4f5d75">SM 2</text>
+    <text x="816" y="198" text-anchor="middle" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">same as SM 0</text>
+    <text x="816" y="240" text-anchor="middle" font-size="14" font-weight="600" fill="#5a6580">⋯</text>
+    <rect x="736" y="260" width="160" height="56" rx="6" fill="#f5f5f5" stroke="rgba(45,49,66,0.30)" stroke-dasharray="4,3"/>
+    <text x="816" y="284" text-anchor="middle" font-size="14" font-weight="600" fill="#4f5d75">SM 107</text>
+    <text x="816" y="302" text-anchor="middle" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">A100: 108 SMs</text>
+  </g>
+
+  <text x="40" y="548" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="17" fill="#4f5d75">A block lives on one SM for its whole life. Blocks never talk to each other except through global memory.</text>
+</svg>

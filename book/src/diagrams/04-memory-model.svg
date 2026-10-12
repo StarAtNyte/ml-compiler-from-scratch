@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 480" role="img" aria-labelledby="04-memory-model-title 04-memory-model-desc">
+  <title id="04-memory-model-title">Memory ordering with AFTER</title>
+  <desc id="04-memory-model-desc">The scratch-buffer program: a store writes a[0]+a[1] into tmp, AFTER(tmp, store) makes the later load of tmp depend on that store, the loaded value is squared and stored to out, and SINK gathers the program's effects.</desc>
+  <defs>
+    <marker id="04-memory-model-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/>
+    </marker>
+    <marker id="04-memory-model-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#bf4520"/>
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f5f5f5"/>
+
+  <!-- connectors -->
+  <g stroke="#4f5d75" stroke-width="1.2" fill="none" marker-end="url(#04-memory-model-arrow)">
+    <line x1="220" y1="88" x2="278" y2="88"/>
+    <path d="M220,200 H322 Q330,200 330,192 V118"/>
+    <line x1="220" y1="220" x2="518" y2="220"/>
+    <line x1="610" y1="236" x2="610" y2="298"/>
+    <line x1="700" y1="328" x2="758" y2="328"/>
+    <line x1="850" y1="116" x2="850" y2="298"/>
+    <path d="M850,356 V380 Q850,388 842,388 H378 Q370,388 370,380 V358"/>
+  </g>
+  <path d="M460,88 H602 Q610,88 610,96 V178" fill="none" stroke="#bf4520" stroke-width="1.4" stroke-dasharray="5,4" marker-end="url(#04-memory-model-arrow-accent)"/>
+  <rect x="496" y="64" width="72" height="14" rx="2" fill="#f5f5f5"/>
+  <text x="532" y="75" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#bf4520" letter-spacing="0.06em">ORDER</text>
+
+  <g font-family="Geist, Inter, system-ui, sans-serif" text-anchor="middle">
+    <rect x="40" y="60" width="180" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+    <text x="130" y="84" font-size="14" font-weight="600" fill="#2d3142">BUFFER a</text>
+    <text x="130" y="102" font-size="11" fill="#4f5d75" font-family="Geist Mono, JetBrains Mono, monospace">slot 0 · GLOBAL</text>
+
+    <rect x="280" y="60" width="180" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+    <text x="370" y="84" font-size="14" font-weight="600" fill="#2d3142">STORE w</text>
+    <text x="370" y="102" font-size="11" fill="#4f5d75" font-family="Geist Mono, JetBrains Mono, monospace">tmp[0] = a[0] + a[1]</text>
+
+    <rect x="760" y="60" width="180" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+    <text x="850" y="84" font-size="14" font-weight="600" fill="#2d3142">BUFFER out</text>
+    <text x="850" y="102" font-size="11" fill="#4f5d75" font-family="Geist Mono, JetBrains Mono, monospace">slot 1 · GLOBAL</text>
+
+    <rect x="40" y="180" width="180" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+    <text x="130" y="204" font-size="14" font-weight="600" fill="#2d3142">ALLOC tmp</text>
+    <text x="130" y="222" font-size="11" fill="#4f5d75" font-family="Geist Mono, JetBrains Mono, monospace">f32[1] · LOCAL</text>
+
+    <rect x="520" y="180" width="180" height="56" rx="6" fill="rgba(191,69,32,0.08)" stroke="#bf4520" stroke-width="1.4"/>
+    <text x="610" y="204" font-size="14" font-weight="600" fill="#2d3142">AFTER</text>
+    <text x="610" y="222" font-size="11" fill="#bf4520" font-family="Geist Mono, JetBrains Mono, monospace">tmp, once w is done</text>
+
+    <rect x="280" y="300" width="180" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+    <text x="370" y="324" font-size="14" font-weight="600" fill="#2d3142">SINK</text>
+    <text x="370" y="342" font-size="11" fill="#4f5d75" font-family="Geist Mono, JetBrains Mono, monospace">the program's effects</text>
+
+    <rect x="520" y="300" width="180" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+    <text x="610" y="324" font-size="14" font-weight="600" fill="#2d3142">LOAD v</text>
+    <text x="610" y="342" font-size="11" fill="#4f5d75" font-family="Geist Mono, JetBrains Mono, monospace">tmp[0], after w</text>
+
+    <rect x="760" y="300" width="180" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+    <text x="850" y="324" font-size="14" font-weight="600" fill="#2d3142">STORE</text>
+    <text x="850" y="342" font-size="11" fill="#4f5d75" font-family="Geist Mono, JetBrains Mono, monospace">out[0] = v * v</text>
+  </g>
+
+  <!-- legend -->
+  <line x1="40" y1="420" x2="920" y2="420" stroke="rgba(45,49,66,0.12)" stroke-width="0.8"/>
+  <g font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">
+    <text x="40" y="452" letter-spacing="0.12em" fill="#5a6580">LEGEND</text>
+    <line x1="140" y1="448" x2="184" y2="448" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#04-memory-model-arrow)"/>
+    <text x="196" y="452">operand: value or address flows to its user</text>
+    <line x1="560" y1="448" x2="604" y2="448" stroke="#bf4520" stroke-width="1.4" stroke-dasharray="5,4" marker-end="url(#04-memory-model-arrow-accent)"/>
+    <text x="616" y="452">ordering only: no C emitted</text>
+  </g>
+</svg>

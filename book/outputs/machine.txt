@@ -1,0 +1,3 @@
+Model name:                              13th Gen Intel(R) Core(TM) i7-13620H
+Python 3.12.13
+gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0

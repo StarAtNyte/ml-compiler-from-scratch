@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 410" role="img" aria-labelledby="04-abi-title 04-abi-desc">
+  <title id="04-abi-title">Passing a numpy array to a C kernel</title>
+  <desc id="04-abi-desc">ctypes passes only the address of a numpy array's data block; it arrives in register rdi as the kernel's first pointer argument, and the kernel reads element 3 at byte offset 12 from that address, while dtype, shape and strides stay behind in Python.</desc>
+  <defs>
+    <marker id="04-abi-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+    <marker id="04-abi-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#bf4520"/></marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f5f5f5"/>
+  <g font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" letter-spacing="0.12em">
+    <text x="40" y="52">PYTHON</text><text x="360" y="52">SYSTEM V CALL</text><text x="680" y="52">COMPILED KERNEL</text>
+  </g>
+  <g stroke="#4f5d75" stroke-width="1.2" fill="none" marker-end="url(#04-abi-arrow)">
+    <line x1="280" y1="100" x2="358" y2="100"/>
+    <line x1="600" y1="100" x2="678" y2="100"/>
+    <path d="M160,128 V280 Q160,288 168,288 H278"/>
+  </g>
+  <path d="M800,128 V280 Q800,288 792,288 H682" fill="none" stroke="#bf4520" stroke-width="1.4" marker-end="url(#04-abi-arrow-accent)"/>
+  <g font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" letter-spacing="0.06em" text-anchor="middle">
+    <rect x="284" y="76" width="70" height="14" rx="2" fill="#f5f5f5"/><text x="319" y="87">ADDRESS</text>
+    <rect x="604" y="76" width="70" height="14" rx="2" fill="#f5f5f5"/><text x="639" y="87">ARG 1</text>
+  </g>
+  <rect x="810" y="190" width="140" height="16" rx="2" fill="#f5f5f5"/><text x="814" y="202" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#bf4520">data0[3] = [rdi+0xc]</text>
+  <text x="172" y="202" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">x.ctypes.data</text>
+  <g font-family="Geist, Inter, system-ui, sans-serif" text-anchor="middle">
+    <rect x="40" y="72" width="240" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+    <text x="160" y="96" font-size="14" font-weight="600" fill="#2d3142">x: np.ndarray</text>
+    <text x="160" y="114" font-size="11" fill="#4f5d75" font-family="Geist Mono, JetBrains Mono, monospace">float32 · (4,) · strides (4,)</text>
+    <rect x="360" y="72" width="240" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+    <text x="480" y="96" font-size="14" font-weight="600" fill="#2d3142">register rdi</text>
+    <text x="480" y="114" font-size="11" fill="#4f5d75" font-family="Geist Mono, JetBrains Mono, monospace">a 64-bit address, nothing else</text>
+    <rect x="680" y="72" width="240" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+    <text x="800" y="96" font-size="14" font-weight="600" fill="#2d3142">void k(float* data0, …)</text>
+    <text x="800" y="114" font-size="11" fill="#4f5d75" font-family="Geist Mono, JetBrains Mono, monospace">data0 = rdi, data1 = rsi</text>
+  </g>
+  <text x="480" y="152" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">next pointer args: rsi, rdx, rcx, r8, r9</text>
+  <text x="280" y="248" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" letter-spacing="0.12em">DATA BLOCK · 16 BYTES · HEAP</text>
+  <rect x="280" y="260" width="100" height="56" rx="0" fill="#f5f5f5" stroke="#2d3142"/>
+  <text x="330" y="284" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">x[0]</text>
+  <text x="330" y="302" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">+0 bytes</text>
+  <rect x="380" y="260" width="100" height="56" rx="0" fill="#f5f5f5" stroke="#2d3142"/>
+  <text x="430" y="284" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">x[1]</text>
+  <text x="430" y="302" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">+4 bytes</text>
+  <rect x="480" y="260" width="100" height="56" rx="0" fill="#f5f5f5" stroke="#2d3142"/>
+  <text x="530" y="284" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">x[2]</text>
+  <text x="530" y="302" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">+8 bytes</text>
+  <rect x="580" y="260" width="100" height="56" rx="0" fill="rgba(191,69,32,0.08)" stroke="#bf4520"/>
+  <text x="630" y="284" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">x[3]</text>
+  <text x="630" y="302" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#bf4520">+12 bytes</text>
+  <text x="40" y="364" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="16" fill="#4f5d75">dtype, shape and strides stay behind in Python: the kernel trusts that the address points at</text>
+  <text x="40" y="386" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="16" fill="#4f5d75">enough contiguous float32 values, and nothing checks that it does.</text>
+</svg>

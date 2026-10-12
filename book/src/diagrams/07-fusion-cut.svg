@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 520" role="img" aria-labelledby="07-fusion-cut-title 07-fusion-cut-desc">
+  <title id="07-fusion-cut-title">Softmax cut into three kernels</title>
+  <desc id="07-fusion-cut-desc">The softmax graph is cut at its two reductions: kernel 0 computes the row max into tmp0, kernel 1 the row sum of exp(x - max) into tmp1, and kernel 2 the output, recomputing exp(x - max).</desc>
+  <defs>
+    <marker id="07-fusion-cut-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+    <marker id="07-fusion-cut-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#bf4520"/></marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f5f5f5"/>
+
+  <!-- zones -->
+  <rect x="90" y="120" width="220" height="330" rx="8" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.12)"/>
+  <rect x="370" y="120" width="220" height="330" rx="8" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.12)"/>
+  <rect x="650" y="120" width="220" height="330" rx="8" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.12)"/>
+
+  <!-- connectors (before boxes) -->
+  <path d="M 200 80 L 200 180" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#07-fusion-cut-arrow)"/>
+  <path d="M 480 80 L 480 180" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#07-fusion-cut-arrow)"/>
+  <path d="M 780 80 L 780 300" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#07-fusion-cut-arrow)"/>
+  <path d="M 290 208 L 390 208" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#07-fusion-cut-arrow)"/>
+  <path d="M 200 236 L 200 392 Q 200 400 208 400 L 732 400 Q 740 400 740 392 L 740 356" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#07-fusion-cut-arrow)"/>
+  <path d="M 480 236 L 480 300" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#07-fusion-cut-arrow)"/>
+  <path d="M 570 328 L 670 328" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#07-fusion-cut-arrow)"/>
+
+  <!-- labels -->
+  <rect x="322.4" y="186" width="35.3" height="17" rx="2" fill="#f5f5f5"/>
+  <text x="340" y="198" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" letter-spacing="0.04em">tmp0</text>
+  <rect x="462.4" y="378" width="35.3" height="17" rx="2" fill="#f5f5f5"/>
+  <text x="480" y="390" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" letter-spacing="0.04em">tmp0</text>
+  <rect x="602.4" y="306" width="35.3" height="17" rx="2" fill="#f5f5f5"/>
+  <text x="620" y="318" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" letter-spacing="0.04em">tmp1</text>
+
+  <!-- nodes -->
+  <rect x="110" y="32" width="740" height="48" rx="6" fill="#f5f5f5"/>
+  <rect x="110" y="32" width="740" height="48" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+  <text x="480.0" y="61.0" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">x  (4, 8)</text>
+  <rect x="110" y="180" width="180" height="56" rx="6" fill="#f5f5f5"/>
+  <rect x="110" y="180" width="180" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+  <text x="200.0" y="204.0" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">max</text>
+  <text x="200.0" y="222.0" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">REDUCE MAX</text>
+  <rect x="390" y="180" width="180" height="56" rx="6" fill="#f5f5f5"/>
+  <rect x="390" y="180" width="180" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+  <text x="480.0" y="204.0" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">exp(x − max)</text>
+  <text x="480.0" y="222.0" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">elementwise, fused</text>
+  <rect x="390" y="300" width="180" height="56" rx="6" fill="#f5f5f5"/>
+  <rect x="390" y="300" width="180" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+  <text x="480.0" y="324.0" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">sum</text>
+  <text x="480.0" y="342.0" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">REDUCE ADD</text>
+  <rect x="670" y="300" width="180" height="56" rx="6" fill="#f5f5f5"/>
+  <rect x="670" y="300" width="180" height="56" rx="6" fill="rgba(191,69,32,0.08)" stroke="#bf4520" stroke-width="1.4"/>
+  <text x="760.0" y="324.0" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">e · 1/sum</text>
+  <text x="760.0" y="342.0" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#bf4520">exp(x − max) again</text>
+
+  <!-- annotations -->
+  <text x="106" y="438" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" letter-spacing="0.12em">KERNEL 0 · r_4</text>
+  <text x="386" y="438" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" letter-spacing="0.12em">KERNEL 1 · r_4</text>
+  <text x="666" y="438" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" letter-spacing="0.12em">KERNEL 2 · e_4_8</text>
+  <text x="840" y="62" text-anchor="end" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">input buffer · in 0</text>
+  <text x="90" y="488" text-anchor="start" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="16" fill="#4f5d75">each REDUCE ends a kernel; the cheap exp(x − max) is recomputed in kernel 2 rather than stored</text>
+</svg>

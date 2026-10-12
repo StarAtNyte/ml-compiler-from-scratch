@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 540" role="img" aria-labelledby="grid-mapping-title grid-mapping-desc">
+  <title id="grid-mapping-title">Mapping a 64 x 128 output onto a CUDA grid</title>
+  <desc id="grid-mapping-desc">The 64 by 128 output of an elementwise kernel is cut into 16 by 16 tiles, one per thread block, giving an 8 by 4 grid; inside a block threadIdx.x runs along a row so the 32 lanes of warp 0 cover two rows of 16 contiguous elements.</desc>
+  <defs><marker id="grid-mapping-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker></defs>
+  <rect width="100%" height="100%" fill="#f5f5f5"/>
+  <line x1="592" y1="192" x2="684" y2="192" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#grid-mapping-arrow)"/>
+  <rect x="80" y="96" width="512" height="256" fill="#ececec" stroke="#2d3142"/>
+  <line x1="144" y1="96" x2="144" y2="352" stroke="rgba(45,49,66,0.25)"/>
+  <line x1="208" y1="96" x2="208" y2="352" stroke="rgba(45,49,66,0.25)"/>
+  <line x1="272" y1="96" x2="272" y2="352" stroke="rgba(45,49,66,0.25)"/>
+  <line x1="336" y1="96" x2="336" y2="352" stroke="rgba(45,49,66,0.25)"/>
+  <line x1="400" y1="96" x2="400" y2="352" stroke="rgba(45,49,66,0.25)"/>
+  <line x1="464" y1="96" x2="464" y2="352" stroke="rgba(45,49,66,0.25)"/>
+  <line x1="528" y1="96" x2="528" y2="352" stroke="rgba(45,49,66,0.25)"/>
+  <line x1="80" y1="160" x2="592" y2="160" stroke="rgba(45,49,66,0.25)"/>
+  <line x1="80" y1="224" x2="592" y2="224" stroke="rgba(45,49,66,0.25)"/>
+  <line x1="80" y1="288" x2="592" y2="288" stroke="rgba(45,49,66,0.25)"/>
+  <rect x="528" y="160" width="64" height="64" fill="rgba(191,69,32,0.14)" stroke="#bf4520" stroke-width="1.6"/>
+  <text x="112" y="86" text-anchor="middle" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">0</text>
+  <text x="176" y="86" text-anchor="middle" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">1</text>
+  <text x="240" y="86" text-anchor="middle" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">2</text>
+  <text x="304" y="86" text-anchor="middle" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">3</text>
+  <text x="368" y="86" text-anchor="middle" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">4</text>
+  <text x="432" y="86" text-anchor="middle" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">5</text>
+  <text x="496" y="86" text-anchor="middle" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">6</text>
+  <text x="560" y="86" text-anchor="middle" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">7</text>
+  <text x="70" y="132" text-anchor="end" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">0</text>
+  <text x="70" y="196" text-anchor="end" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">1</text>
+  <text x="70" y="260" text-anchor="end" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">2</text>
+  <text x="70" y="324" text-anchor="end" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">3</text>
+  <text x="80" y="64" font-size="11" fill="#5a6580" letter-spacing="0.12em" font-family="Geist Mono, JetBrains Mono, monospace">BLOCKIDX.X → COLUMNS n (128 = 8 × 16)</text>
+  <text x="80" y="380" font-size="11" fill="#5a6580" letter-spacing="0.12em" font-family="Geist Mono, JetBrains Mono, monospace">BLOCKIDX.Y ↓ ROWS m (64 = 4 × 16) · GRID (8, 4, 1)</text>
+  <text x="688" y="64" font-size="11" fill="#5a6580" letter-spacing="0.12em" font-family="Geist Mono, JetBrains Mono, monospace">BLOCK (7, 1) · (16, 16, 1)</text>
+  <rect x="688" y="96" width="192" height="192" fill="#f5f5f5" stroke="#2d3142"/>
+  <rect x="688" y="96" width="192" height="24" fill="rgba(191,69,32,0.14)"/>
+  <line x1="700" y1="96" x2="700" y2="288" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="688" y1="108" x2="880" y2="108" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="712" y1="96" x2="712" y2="288" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="688" y1="120" x2="880" y2="120" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="724" y1="96" x2="724" y2="288" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="688" y1="132" x2="880" y2="132" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="736" y1="96" x2="736" y2="288" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="688" y1="144" x2="880" y2="144" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="748" y1="96" x2="748" y2="288" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="688" y1="156" x2="880" y2="156" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="760" y1="96" x2="760" y2="288" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="688" y1="168" x2="880" y2="168" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="772" y1="96" x2="772" y2="288" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="688" y1="180" x2="880" y2="180" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="784" y1="96" x2="784" y2="288" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="688" y1="192" x2="880" y2="192" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="796" y1="96" x2="796" y2="288" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="688" y1="204" x2="880" y2="204" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="808" y1="96" x2="808" y2="288" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="688" y1="216" x2="880" y2="216" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="820" y1="96" x2="820" y2="288" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="688" y1="228" x2="880" y2="228" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="832" y1="96" x2="832" y2="288" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="688" y1="240" x2="880" y2="240" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="844" y1="96" x2="844" y2="288" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="688" y1="252" x2="880" y2="252" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="856" y1="96" x2="856" y2="288" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="688" y1="264" x2="880" y2="264" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="868" y1="96" x2="868" y2="288" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="688" y1="276" x2="880" y2="276" stroke="rgba(45,49,66,0.15)"/>
+  <line x1="688" y1="120" x2="880" y2="120" stroke="#bf4520" stroke-width="1.4"/>
+  <text x="688" y="312" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">threadIdx.x → along a row</text>
+  <text x="688" y="332" font-size="14" font-weight="600" fill="#bf4520" font-family="Geist, Inter, system-ui, sans-serif">Rows 0–1 = warp 0</text>
+  <text x="688" y="350" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">32 lanes, 2 × 16 contiguous</text>
+  <rect x="80" y="420" width="800" height="84" rx="6" fill="#ececec" stroke="rgba(45,49,66,0.12)"/>
+  <text x="100" y="446" font-size="12" fill="#2d3142" font-family="Geist Mono, JetBrains Mono, monospace">int gidx1 = blockIdx.y;   int lidx1 = threadIdx.y;   // row    = gidx1*16 + lidx1</text>
+  <text x="100" y="466" font-size="12" fill="#2d3142" font-family="Geist Mono, JetBrains Mono, monospace">int gidx0 = blockIdx.x;   int lidx0 = threadIdx.x;   // column = gidx0*16 + lidx0</text>
+  <text x="100" y="486" font-size="12" fill="#2d3142" font-family="Geist Mono, JetBrains Mono, monospace">int alu1 = gidx1*2048 + lidx1*128 + gidx0*16 + lidx0;  // row*128 + column</text>
+</svg>

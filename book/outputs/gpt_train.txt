@@ -1,0 +1,30 @@
+112.6k parameters, vocab 65
+step     0  train 4.266  val 3.827    8933 ms/step
+step    50  train 2.841  val 2.855     368 ms/step
+step   100  train 2.616  val 2.559     288 ms/step
+step   150  train 2.503  val 2.577     263 ms/step
+step   200  train 2.444  val 2.514     249 ms/step
+step   250  train 2.357  val 2.491     240 ms/step
+step   300  train 2.265  val 2.336     240 ms/step
+step   350  train 2.325  val 2.271     241 ms/step
+step   400  train 2.156  val 2.286     239 ms/step
+step   450  train 2.274  val 2.276     240 ms/step
+step   500  train 2.074  val 2.223     235 ms/step
+step   550  train 2.065  val 2.163     235 ms/step
+step   599  train 2.015  val 2.110     235 ms/step
+
+ICGLOUTery man!
+
+For apbeng mantound rear:
+
+Whals pant lachtiow't,
+Htaw be pect she sto now thy sost soo with ble oving dity:
+Went song rief tin of taut thurfs me dat aournclint,
+Goant?
+
+
+FORE:
+Se wat, more-ks in sterdide be tom:
+Whinenten wer I thent nor ifor ond he;
+Wegon:
+If to hard, of his do to

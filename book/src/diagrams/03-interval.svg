@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 880 420" role="img" aria-labelledby="03-interval-title 03-interval-desc">
+  <title id="03-interval-title">Bounds propagation through (i*8 + j) // 8</title>
+  <desc id="03-interval-desc">Interval bounds flow from the leaves of the index expression to its root: i in [0,3] times 8 gives [0,24], plus j in [0,7] gives [0,31], and floor division by 8 gives [0,3]; the constant 8 is one shared node.</desc>
+  <defs>
+    <marker id="03-interval-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+      <polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/>
+    </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f5f5f5"/>
+
+  <!-- connectors (drawn before boxes); data flows upward -->
+  <g stroke="#4f5d75" stroke-width="1.2" fill="none" marker-end="url(#03-interval-arrow)">
+    <!-- i -> MUL -->
+    <path d="M420,324 V306 Q420,298 428,298 H508 Q516,298 516,290 V280"/>
+    <!-- 8 -> MUL -->
+    <path d="M660,324 V306 Q660,298 652,298 H572 Q564,298 564,290 V280"/>
+    <!-- j -> ADD -->
+    <path d="M150,324 V206 Q150,198 158,198 H313 Q321,198 321,190 V180"/>
+    <!-- MUL -> ADD -->
+    <path d="M540,224 V206 Q540,198 532,198 H377 Q369,198 369,190 V180"/>
+    <!-- ADD -> FLOORDIV -->
+    <path d="M345,124 V106 Q345,98 353,98 H448 Q456,98 456,90 V80"/>
+    <!-- 8 -> FLOORDIV (shared constant) -->
+    <path d="M744,352 H792 Q800,352 800,344 V56 Q800,48 792,48 H568"/>
+  </g>
+
+  <g font-family="Geist, Inter, system-ui, sans-serif" text-anchor="middle">
+    <!-- leaves -->
+    <rect x="66" y="324" width="168" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+    <text x="150" y="348" font-size="14" font-weight="600" fill="#2d3142">RANGE</text>
+    <text x="150" y="366" font-size="11" fill="#4f5d75" font-family="Geist Mono, JetBrains Mono, monospace">j ∈ [0, 7]</text>
+
+    <rect x="336" y="324" width="168" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+    <text x="420" y="348" font-size="14" font-weight="600" fill="#2d3142">RANGE</text>
+    <text x="420" y="366" font-size="11" fill="#4f5d75" font-family="Geist Mono, JetBrains Mono, monospace">i ∈ [0, 3]</text>
+
+    <rect x="576" y="324" width="168" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+    <text x="660" y="348" font-size="14" font-weight="600" fill="#2d3142">CONST</text>
+    <text x="660" y="366" font-size="11" fill="#4f5d75" font-family="Geist Mono, JetBrains Mono, monospace">8 ∈ [8, 8]</text>
+
+    <!-- MUL -->
+    <rect x="436" y="224" width="208" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+    <text x="540" y="248" font-size="14" font-weight="600" fill="#2d3142">MUL</text>
+    <text x="540" y="266" font-size="11" fill="#4f5d75" font-family="Geist Mono, JetBrains Mono, monospace">corners 0, 0, 0, 24 → [0, 24]</text>
+
+    <!-- ADD -->
+    <rect x="241" y="124" width="208" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+    <text x="345" y="148" font-size="14" font-weight="600" fill="#2d3142">ADD</text>
+    <text x="345" y="166" font-size="11" fill="#4f5d75" font-family="Geist Mono, JetBrains Mono, monospace">[0+0, 24+7] → [0, 31]</text>
+
+    <!-- FLOORDIV (focal) -->
+    <rect x="352" y="24" width="216" height="56" rx="6" fill="rgba(191,69,32,0.08)" stroke="#bf4520" stroke-width="1.4"/>
+    <text x="460" y="48" font-size="14" font-weight="600" fill="#2d3142">FLOORDIV</text>
+    <text x="460" y="66" font-size="11" fill="#bf4520" font-family="Geist Mono, JetBrains Mono, monospace">[0//8, 31//8] → [0, 3]</text>
+  </g>
+
+  <!-- editorial callout -->
+  <text x="40" y="40" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="16" fill="#4f5d75">children before parents,</text>
+  <text x="40" y="60" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="16" fill="#4f5d75">each interval cached on its node</text>
+</svg>

@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 390" role="img" aria-labelledby="attn-shapes-title attn-shapes-desc">
+  <title id="attn-shapes-title">Causal self-attention, shape by shape</title>
+  <desc id="attn-shapes-desc">The input of shape B,T,C is projected to queries, keys and values, split into H heads of shape B,H,T,D by views, multiplied into B,H,T,T scores, scaled, masked and softmaxed, multiplied with the values back to B,H,T,D, merged into B,T,C and projected. Each step is labeled with the uopc kernels it becomes.</desc>
+  <defs><marker id="attn-shapes-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker></defs>
+  <rect width="100%" height="100%" fill="#f5f5f5"/>
+  <line x1="240" y1="96" x2="260" y2="96" stroke="#4f5d75" stroke-width="1.2" fill="none" marker-end="url(#attn-shapes-arrow)"/>
+  <line x1="464" y1="96" x2="484" y2="96" stroke="#4f5d75" stroke-width="1.2" fill="none" marker-end="url(#attn-shapes-arrow)"/>
+  <line x1="688" y1="96" x2="708" y2="96" stroke="#4f5d75" stroke-width="1.2" fill="none" marker-end="url(#attn-shapes-arrow)"/>
+  <line x1="812" y1="140" x2="812" y2="216" stroke="#4f5d75" stroke-width="1.2" fill="none" marker-end="url(#attn-shapes-arrow)"/>
+  <line x1="712" y1="264" x2="692" y2="264" stroke="#4f5d75" stroke-width="1.2" fill="none" marker-end="url(#attn-shapes-arrow)"/>
+  <line x1="488" y1="264" x2="468" y2="264" stroke="#4f5d75" stroke-width="1.2" fill="none" marker-end="url(#attn-shapes-arrow)"/>
+  <line x1="264" y1="264" x2="244" y2="264" stroke="#4f5d75" stroke-width="1.2" fill="none" marker-end="url(#attn-shapes-arrow)"/>
+  <rect x="40" y="64" width="200" height="76" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+  <text x="140.0" y="88" text-anchor="middle" font-size="14" font-weight="600" fill="#2d3142" font-family="Geist, Inter, system-ui, sans-serif">Input x</text>
+  <text x="140.0" y="108" text-anchor="middle" font-size="11" fill="#2d3142" font-family="Geist Mono, JetBrains Mono, monospace">(B, T, C)</text>
+  <text x="140.0" y="126" text-anchor="middle" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">output of LayerNorm 1</text>
+  <rect x="264" y="64" width="200" height="76" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+  <text x="364.0" y="88" text-anchor="middle" font-size="14" font-weight="600" fill="#2d3142" font-family="Geist, Inter, system-ui, sans-serif">QKV projection</text>
+  <text x="364.0" y="108" text-anchor="middle" font-size="11" fill="#2d3142" font-family="Geist Mono, JetBrains Mono, monospace">(B, T, 3C)</text>
+  <text x="364.0" y="126" text-anchor="middle" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">r_16_64_192</text>
+  <rect x="488" y="64" width="200" height="76" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+  <text x="588.0" y="88" text-anchor="middle" font-size="14" font-weight="600" fill="#2d3142" font-family="Geist, Inter, system-ui, sans-serif">Split heads</text>
+  <text x="588.0" y="108" text-anchor="middle" font-size="11" fill="#2d3142" font-family="Geist Mono, JetBrains Mono, monospace">q, k, v: (B, H, T, D)</text>
+  <text x="588.0" y="126" text-anchor="middle" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">views: no kernel</text>
+  <rect x="712" y="64" width="200" height="76" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+  <text x="812.0" y="88" text-anchor="middle" font-size="14" font-weight="600" fill="#2d3142" font-family="Geist, Inter, system-ui, sans-serif">Scores</text>
+  <text x="812.0" y="108" text-anchor="middle" font-size="11" fill="#2d3142" font-family="Geist Mono, JetBrains Mono, monospace">q @ kᵀ: (B, H, T, T)</text>
+  <text x="812.0" y="126" text-anchor="middle" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">r_16_4_64_64</text>
+  <rect x="712" y="220" width="200" height="76" rx="6" fill="rgba(191,69,32,0.08)" stroke="#bf4520" stroke-width="1.4"/>
+  <text x="812.0" y="244" text-anchor="middle" font-size="14" font-weight="600" fill="#2d3142" font-family="Geist, Inter, system-ui, sans-serif">Scale, mask, softmax</text>
+  <text x="812.0" y="264" text-anchor="middle" font-size="11" fill="#bf4520" font-family="Geist Mono, JetBrains Mono, monospace">(B, H, T, T)</text>
+  <text x="812.0" y="282" text-anchor="middle" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">2× r_16_4_64, e_16_4_64_64</text>
+  <rect x="488" y="220" width="200" height="76" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+  <text x="588.0" y="244" text-anchor="middle" font-size="14" font-weight="600" fill="#2d3142" font-family="Geist, Inter, system-ui, sans-serif">Weighted sum</text>
+  <text x="588.0" y="264" text-anchor="middle" font-size="11" fill="#2d3142" font-family="Geist Mono, JetBrains Mono, monospace">P @ v: (B, H, T, D)</text>
+  <text x="588.0" y="282" text-anchor="middle" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">v copy + r_16_4_64_16</text>
+  <rect x="264" y="220" width="200" height="76" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+  <text x="364.0" y="244" text-anchor="middle" font-size="14" font-weight="600" fill="#2d3142" font-family="Geist, Inter, system-ui, sans-serif">Merge heads</text>
+  <text x="364.0" y="264" text-anchor="middle" font-size="11" fill="#2d3142" font-family="Geist Mono, JetBrains Mono, monospace">(B, T, C)</text>
+  <text x="364.0" y="282" text-anchor="middle" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">views: no kernel</text>
+  <rect x="40" y="220" width="200" height="76" rx="6" fill="#f5f5f5" stroke="#2d3142"/>
+  <text x="140.0" y="244" text-anchor="middle" font-size="14" font-weight="600" fill="#2d3142" font-family="Geist, Inter, system-ui, sans-serif">Output projection</text>
+  <text x="140.0" y="264" text-anchor="middle" font-size="11" fill="#2d3142" font-family="Geist Mono, JetBrains Mono, monospace">(B, T, C)</text>
+  <text x="140.0" y="282" text-anchor="middle" font-size="11" fill="#5a6580" font-family="Geist Mono, JetBrains Mono, monospace">r_16_64_64</text>
+  <text x="40" y="340" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="17" fill="#4f5d75">Kernel names from the default model: B = 16, H = 4, T = 64, D = 16.</text>
+  <text x="40" y="362" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="17" fill="#4f5d75">The 1/√D = 0.25 scale and the mask fuse into the softmax kernels.</text>
+</svg>

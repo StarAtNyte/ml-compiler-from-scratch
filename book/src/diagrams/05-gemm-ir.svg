@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 660" role="img" aria-labelledby="05-gemm-ir-title 05-gemm-ir-desc">
+  <title id="05-gemm-ir-title">The hand-written GEMM graph, grouped by scope</title>
+  <desc id="05-gemm-ir-desc">The GEMM accumulator pattern: an ALLOC placed in loops i and j, reset by an init store, updated inside loop k through AFTER(acc, init, k), the k loop closed by END, the final value read back through AFTER(acc, END) and stored to C, and END(i, j) feeding the SINK.</desc>
+  <defs>
+    <marker id="05-gemm-ir-arrow" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#4f5d75"/></marker>
+    <marker id="05-gemm-ir-arrow-accent" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#bf4520"/></marker>
+  </defs>
+  <rect width="100%" height="100%" fill="#f5f5f5"/>
+  <rect x="40" y="150" width="880" height="360" rx="8" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.12)"/>
+  <text x="900" y="174" text-anchor="end" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" letter-spacing="0.12em">SCOPE {i, j} · ONCE PER OUTPUT ELEMENT</text>
+  <rect x="330" y="262" width="560" height="130" rx="8" fill="rgba(45,49,66,0.03)" stroke="rgba(45,49,66,0.12)"/>
+  <text x="870" y="284" text-anchor="end" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580" letter-spacing="0.12em">SCOPE {i, j, k} · K TIMES</text>
+  <!-- connectors -->
+  <path d="M180,106 V188" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#05-gemm-ir-arrow)"/>
+  <path d="M280,208 H358" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#05-gemm-ir-arrow)"/>
+  <path d="M280,228 H312 Q320,228 320,236 V320 Q320,328 328,328 H358" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#05-gemm-ir-arrow)"/>
+  <path d="M460,246 V298" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#05-gemm-ir-arrow)"/>
+  <path d="M560,328 H638" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#05-gemm-ir-arrow)"/>
+  <path d="M740,356 V428" fill="none" stroke="#bf4520" stroke-width="1.4" marker-end="url(#05-gemm-ir-arrow-accent)"/>
+  <path d="M200,246 V402 Q200,410 208,410 H444 Q452,410 452,418 V428" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#05-gemm-ir-arrow)"/>
+  <path d="M640,458 H562" fill="none" stroke="#bf4520" stroke-width="1.4" marker-end="url(#05-gemm-ir-arrow-accent)"/>
+  <path d="M360,458 H282" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#05-gemm-ir-arrow)"/>
+  <path d="M180,486 V558" fill="none" stroke="#4f5d75" stroke-width="1.2" marker-end="url(#05-gemm-ir-arrow)"/>
+  <!-- nodes -->
+  <rect x="80" y="50" width="200" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142" stroke-width="1"/>
+  <text x="180" y="74" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">ALLOC</text>
+  <text x="180" y="92" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">f32[1]</text>
+  <rect x="80" y="190" width="200" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142" stroke-width="1"/>
+  <text x="180" y="214" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">acc</text>
+  <text x="180" y="232" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">AFTER(alloc, i, j)</text>
+  <rect x="360" y="190" width="200" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142" stroke-width="1"/>
+  <text x="460" y="214" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">init</text>
+  <text x="460" y="232" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">acc[0] = 0.0</text>
+  <rect x="360" y="300" width="200" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142" stroke-width="1"/>
+  <text x="460" y="324" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">acck</text>
+  <text x="460" y="342" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">AFTER(acc, init, k)</text>
+  <rect x="640" y="300" width="200" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142" stroke-width="1"/>
+  <text x="740" y="324" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">upd</text>
+  <text x="740" y="342" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">acck[0] += A·B</text>
+  <rect x="640" y="430" width="200" height="56" rx="6" fill="rgba(191,69,32,0.08)" stroke="#bf4520" stroke-width="1.4"/>
+  <text x="740" y="454" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">END k</text>
+  <text x="740" y="472" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#bf4520">all K updates done</text>
+  <rect x="360" y="430" width="200" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142" stroke-width="1"/>
+  <text x="460" y="454" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">read-back</text>
+  <text x="460" y="472" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">AFTER(acc, END k)[0]</text>
+  <rect x="80" y="430" width="200" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142" stroke-width="1"/>
+  <text x="180" y="454" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">STORE</text>
+  <text x="180" y="472" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">C[i*M + j] = acc</text>
+  <rect x="80" y="560" width="200" height="56" rx="6" fill="#f5f5f5" stroke="#2d3142" stroke-width="1"/>
+  <text x="180" y="584" text-anchor="middle" font-family="Geist, Inter, system-ui, sans-serif" font-size="14" font-weight="600" fill="#2d3142">SINK</text>
+  <text x="180" y="602" text-anchor="middle" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#4f5d75">after END(store, i, j)</text>
+  <text x="300" y="84" text-anchor="start" font-family="Geist Mono, JetBrains Mono, monospace" font-size="11" fill="#5a6580">SCOPE { }</text>
+  <text x="320" y="586" text-anchor="start" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="16" fill="#4f5d75">every AFTER source is a dependency: ranges put a node inside loops,</text>
+  <text x="320" y="608" text-anchor="start" font-family="Instrument Serif, Georgia, serif" font-style="italic" font-size="16" fill="#4f5d75">stores and ENDs put it after those effects</text>
+</svg>
