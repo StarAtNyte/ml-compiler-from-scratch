@@ -137,3 +137,12 @@ backedge value, and show why a header phi may legally use the later-written back
 **Next implementation:** add AST lowering, dominance frontiers, phi placement, and renaming. Validate
 against a source interpreter. The executable lab supplies analysis and verification, not that entire
 frontend. Use `tests/test_advanced_labs.py` as a starting example of independent semantic checks.
+
+
+## 21.7 Continue into a complete executable pipeline
+
+The isolated analysis above is now extended by [Chapters 30–32](30-source-to-ssa.md). They implement
+a source frontend, CFG construction, definite assignment, pruned SSA construction, SCCP, effect-aware
+dead-code removal, phi destruction, register allocation with executed spills, and a bounds-checked
+native C backend. Run `.venv/bin/python -m minicc` to execute the pipeline. The earlier “next
+implementation” assignment can now be studied against an actual reference implementation.

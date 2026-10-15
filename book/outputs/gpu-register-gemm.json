@@ -1,0 +1,77 @@
+{
+  "device": "NVIDIA GeForce RTX 3050 6GB Laptop GPU",
+  "architecture": "sm_86",
+  "driver_version": 13020,
+  "nvrtc_version": [
+    12,
+    9
+  ],
+  "shape": [
+    256,
+    256,
+    256
+  ],
+  "source_sha256": "b436a934f116a7e169d24540de6235358e3316388dbd16359827a57900807332",
+  "repeat": 10,
+  "batch": 20,
+  "precision": "float32 inputs/accumulators; runtime NVRTC fast-math policy; no tensor cores",
+  "timing": "CUDA event interval divided by batch; includes any host submission gaps; excludes compilation and transfers",
+  "results": {
+    "gemm_naive": {
+      "samples_ms": [
+        0.11596800088882446,
+        0.11581439971923828,
+        0.11581439971923828,
+        0.1156607985496521,
+        0.11601920127868652,
+        0.11596800088882446,
+        0.11596800088882446,
+        0.11581439971923828,
+        0.1159168004989624,
+        0.11596800088882446
+      ],
+      "median_ms": 0.11594240069389343,
+      "compile_ms": 45.93889300303999,
+      "gflops": 289.4060481685996,
+      "max_absolute_error": 4.5456871553994915e-05,
+      "block": [
+        16,
+        16,
+        1
+      ],
+      "grid": [
+        16,
+        16,
+        1
+      ]
+    },
+    "gemm_tiled": {
+      "samples_ms": [
+        0.04413439929485321,
+        0.04433920085430145,
+        0.04408319890499115,
+        0.04418559968471527,
+        0.04423680007457733,
+        0.04428800046443939,
+        0.04413439929485321,
+        0.04433920085430145,
+        0.04439040124416351,
+        0.04480000138282776
+      ],
+      "median_ms": 0.04426240026950836,
+      "compile_ms": 24.3261489958968,
+      "gflops": 758.0798103060646,
+      "max_absolute_error": 4.5456871553994915e-05,
+      "block": [
+        32,
+        8,
+        1
+      ],
+      "grid": [
+        4,
+        4,
+        1
+      ]
+    }
+  }
+}

@@ -108,6 +108,7 @@ Use the following order; move on by demonstrated ability rather than a fixed cal
 | Hardware depth | Chapter 22 | Real GPU profiles and a GEMM optimization ladder |
 | Dynamic systems | Chapters 23–24 | Guarded execution, memory planner, precision experiments |
 | Numerical and backend depth | Chapters 26–28 | Error analysis, schedule search, irregular operations, target port |
+| Implemented internals | Chapters 30–34 | Source-to-machine compiler and dynamic tensor runtime |
 | Independent work | Chapters 25 and 29 | Reviewed capstone, external codebase change, frontier specialization |
 
 A CPU machine is sufficient for the foundations and compiler construction. GPU indexing can be

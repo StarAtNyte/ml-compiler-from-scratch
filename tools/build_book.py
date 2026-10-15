@@ -34,7 +34,8 @@ WEEKS = {"00": "", "01": "Week 1", "02": "Week 1", "03": "Week 1", "04": "Week 2
          "13": "Week 8", "14": "Weeks 9–10", "15": "Weeks 9–14", "16": "Appendix A", "17": "Appendix B", "18": "Appendix C",
          "19": "Appendix D", "20": "Advanced track", "21": "Advanced track", "22": "Advanced track",
          "23": "Advanced track", "24": "Advanced track", "25": "Capstone", "26": "Advanced track", "27": "Advanced track",
-         "28": "Advanced track", "29": "Frontier preparation"}
+         "28": "Advanced track", "29": "Frontier preparation", "30": "Compiler internals", "31": "Compiler internals",
+         "32": "Compiler internals", "33": "Tensor compiler", "34": "Training compiler", "35": "GPU implementation"}
 
 # files each chapter teaches: shown, collapsed, at the end of the chapter ("Full code for this chapter")
 CHAPTER_CODE = {
@@ -131,7 +132,7 @@ def preprocess(md: str, errors: list[str]) -> str:
       try: code, label, a, b = extract(path, m.group(2))
       except Exception as e:
         errors.append(f"{line}: {e}"); out.append(f"**[missing include: {html.escape(line)}]**"); continue
-      lang = "c" if path.suffix in (".c", ".cu") else "python" if path.suffix == ".py" else ""
+      lang = "c" if path.suffix in (".c", ".cu", ".cuh") else "python" if path.suffix == ".py" else ""
       href = f"{REPO}/blob/main/{m.group(1)}#L{a}-L{b}"
       out += [f'<div class="listing"><a href="{href}" target="_blank" rel="noopener">{html.escape(label)}</a></div>', "",
               f"```{lang}", code.rstrip(), "```"]

@@ -18,6 +18,11 @@ The advanced chapters contain worked explanations and implementation assignments
 gates distinguish study, implementation, correctness, and measured performance; the reference
 compiler does not already implement every extension.
 
+[Chapters 30–34](30-source-to-ssa.md) add two implemented compiler pipelines: source through SSA,
+optimization and machine backends, and dynamic float32 tensors through autodiff, fusion, planned memory, and training.
+They include full code, tests, worked traces, and a measured CPU baseline.
+[Chapter 35](35-register-tiled-gpu.md) adds a real-device register-tiled GEMM with recorded CUDA timings.
+
 The [syllabus contract](20-syllabus-contract.md) maps every supplied course topic to material and
 evidence. Use it to track the original course while following the expanded self-study sequence.
 

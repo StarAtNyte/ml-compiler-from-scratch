@@ -16,7 +16,9 @@ python -m pytest tests/test_advanced_labs.py -q
 These are teaching implementations, separate from the reference compiler's production path.
 Attention executes on the CPU and does not demonstrate GPU performance. Memory planning assumes
 a sequential schedule, disjoint logical temporaries, and inclusive lifetimes. It does not infer
-aliases. The SSA lab verifies already constructed SSA; it does not yet build SSA from source.
+aliases. The SSA lab verifies already constructed SSA. The separate [`minicc`](../minicc/README.md) compiler
+now constructs SSA from source and provides optimizers and backends. The
+[`tensorjit`](../tensorjit/README.md) compiler integrates dynamic shapes, fusion, and memory planning.
 
 | Lab | Book | What its tests establish |
 |---|---|---|
@@ -30,3 +32,10 @@ aliases. The SSA lab verifies already constructed SSA; it does not yet build SSA
 Progress by modifying the lab, predicting the effect, and running its independent checks. Keep
 algorithm correctness, compiler integration, real-device correctness, and speed measurements as
 separate milestones. Each chapter specifies the next extension beyond the executable baseline.
+
+
+The seventh lab, `python -m labs.gpu_gemm`, requires real CUDA hardware and discoverable NVRTC.
+It compares naive and shared/register-tiled GEMM with tail guards, a double-precision CPU oracle,
+and device-event samples. `tests/test_gpu_gemm_lab.py` runs four real-device correctness cases or
+explicitly skips without hardware. Chapter 35 explains the ownership proof and timing limitations.
+The CUDA source is included as package data in `labs/kernels/gemm.cuh`.

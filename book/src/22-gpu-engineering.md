@@ -193,3 +193,10 @@ an independent dense computation, so a shared error in tiled forward and backwar
 **Next implementation:** lower the tile loop into a real GPU kernel, then handle parallel dK/dV
 accumulation without races. Compare memory and device time with the dense baseline at matched precision.
 The serial CPU loop's safe accumulation order is not an automatic GPU scheduling solution.
+
+
+## 22.8 Continue into measured register tiling
+
+[Chapter 35](35-register-tiled-gpu.md) implements a 64×64 shared-memory output tile with per-thread
+register accumulators, masks partial dimensions, and measures the actual CUDA kernels on an RTX 3050.
+It includes the kernel, event-timing harness, independent numerical checks, and raw recorded results.

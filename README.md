@@ -27,7 +27,20 @@ roles. Chapters 26–29 develop numerical analysis, scheduling and backend const
 workloads, distributed reliability, and research practice. Real-device and scale claims require
 measured evidence; the extended text does not imply those features are implemented in `uopc`.
 
-The advanced track includes [six runnable labs](labs/README.md), with independent checks for SSA,
+Two additional executable compiler pipelines develop the advanced material in depth:
+
+- [`minicc`](minicc/README.md): restricted source → CFG → pruned SSA → conditional constant propagation → effect-preserving DCE → native C or a register machine with spills. [Chapters 30–32](book/src/30-source-to-ssa.md) explain each stage.
+- [`tensorjit`](tensorjit/README.md): bounded symbolic shapes → autodiff → fused float32 loops → guarded native forward/backward execution with actual buffer reuse. [Chapters 33–34](book/src/33-dynamic-tensor-compiler.md) include measured baselines, gradient checks, and dynamic-batch training.
+
+The [real-device GEMM lab](book/src/35-register-tiled-gpu.md) adds shared/register tiling, tail handling,
+CUDA event timing, independent correctness checks, and a recorded RTX 3050 result.
+
+Run `.venv/bin/python -m minicc`, `.venv/bin/python -m tensorjit`, and
+`.venv/bin/python -m pytest tests/test_minicc.py tests/test_tensorjit.py -q`.
+These are teaching compilers; they do not imply frontier-scale execution or integration with every
+feature of `uopc`.
+
+The advanced track also includes [standalone algorithm labs](labs/README.md), with independent checks for SSA,
 tiled attention gradients, memory reuse, dynamic dispatch, numerical methods, and sparse operations.
 Run `.venv/bin/python -m pytest tests/test_advanced_labs.py -q` to validate them.
 
@@ -76,6 +89,7 @@ they match the tested code. Outputs shown in the book were produced by running i
 | VI: Real models | 14 Training a GPT · 15 Beyond | 9–14 |
 | Advanced track | 20 Syllabus contract · 21 Compiler foundations · 22 GPU engineering · 23 Dynamic execution · 24 Runtime & scale · 25 Capstone | Self-paced |
 | Frontier track | 26 Numerics · 27 Scheduling & backends · 28 Irregular workloads · 29 Frontier-lab preparation | Self-paced |
+| Compiler internals | 30 Source & SSA construction · 31 Optimization · 32 Machine backends · 33 Dynamic tensor compiler · 34 Dynamic training · 35 Real GPU GEMM | Self-paced |
 | Appendices | A Reference · B Testing & slop management · C Glossary & quiz bank | — |
 
 ## Repository map
@@ -88,7 +102,10 @@ uopc/            the compiler (one module per idea, in course order)
   kernelize.py autodiff.py tensor.py nn.py          week 5: fusion, gradients, Tensor, layers
   opt.py                                            week 6: upcast, threads, layout, search
   gpu.py cuda.py                                    weeks 7-8: GPU mapping, CUDA, tensor cores
-tests/           test_wNN_*.py, one file per week
+minicc/          source compiler: CFG, SSA, optimization, register machine, C backend
+tensorjit/       dynamic float32 tensor compiler: fusion, guards, planned memory
+labs/            independent advanced algorithm exercises
+tests/           course tests plus independent compiler/lab checks
 examples/        mnist_mlp.py bench_gemm.py flash_attention.py gpt.py
 book/            src/ (chapters + diagrams), outputs/ (captured runs), NOTES.md (real bugs), site/ (built)
 tools/           build_book.py, site/ (the website's CSS and JS)
@@ -97,9 +114,10 @@ tools/           build_book.py, site/ (the website's CSS and JS)
 
 ## Limitations
 
-- The reference machine has no working NVIDIA driver, so CUDA output is render-tested and GPU index
+- The original course runs had no working NVIDIA driver, so CUDA output was render-tested and GPU index
   math is verified by running the same kernels through a CPU emulator. `tests/test_w07_gpu.py` runs the
-  shared-memory GEMM on a real GPU when one is available.
+  shared-memory GEMM on a real GPU when one is available. Chapter 35 separately records a real RTX 3050
+  register-tiled GEMM experiment; it does not retroactively validate every earlier GPU path.
 - Symbolic shapes and KV caching are design exercises (chapter 15), not implemented.
 - Benchmarks are from a laptop and vary between runs by up to 2x (thermal limits, power source,
   background load). `book/outputs/` has the raw runs.

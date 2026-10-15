@@ -112,3 +112,12 @@ test. Do not turn the failure into an unconditional copy without measuring the c
 **Next implementation:** replace the fixed kernel with lowering from symbolic tensor expressions.
 Keep expression identity, bounds, target, numerical policy, and layout specialization in the plan
 contract. This small dispatcher does not provide general symbolic shape inference or Python capture.
+
+
+## 23.7 Continue into a dynamic tensor graph compiler
+
+[Chapter 33](33-dynamic-tensor-compiler.md) goes beyond the fixed-kernel dispatcher. Its `tensorjit`
+compiler emits runtime-sized loops for tensor expressions, checks symbolic dimension bindings,
+fuses pointwise producers into consumers, and runs the result with planned temporary storage.
+It implements a bounded subset; general Python capture and arbitrary symbolic relations remain
+separate projects.

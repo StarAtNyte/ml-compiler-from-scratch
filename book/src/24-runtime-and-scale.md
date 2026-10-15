@@ -128,3 +128,12 @@ mistake would otherwise provide false confidence.
 allocate an aligned device arena, and bind kernel arguments to slices. Keep the initial integration
 on one ordered stream. Multi-stream reuse needs event-based happens-before proofs, not these integer
 schedule positions alone.
+
+
+## 24.7 Run the planner inside an actual compiler runtime
+
+[Chapter 33](33-dynamic-tensor-compiler.md) derives lifetimes from rendered kernel dependencies,
+allocates an aligned arena, and passes planned buffer slices to native kernels. Its tests check
+actual matrix-chain results, memory savings, and retained-output safety. This implements the
+single-schedule integration described above in a separate float32 compiler, without modifying
+`uopc`'s existing device runtime.

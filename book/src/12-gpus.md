@@ -1,5 +1,9 @@
 # 12. GPU architecture and mapping kernels
 
+> **Later hardware validation:** the original chapter's emulation and unavailable-driver notes
+> describe its original runs. [Chapter 35](35-register-tiled-gpu.md) now adds a separate real-device
+> GEMM implementation and recorded RTX 3050 results, with its own correctness and timing scope.
+
 Every kernel you have generated so far is a loop nest that one CPU core, or a dozen of them under OpenMP, walks
 through in order. A GPU offers a different deal. You don't write the outer loops. You describe what *one
 iteration* does, say how many iterations you want, and the hardware runs tens of thousands of them at once

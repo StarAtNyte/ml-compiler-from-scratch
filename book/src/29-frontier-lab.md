@@ -112,3 +112,21 @@ attention kernel; symbolic tensor compilation; runtime buffer binding; model-lev
 validation; and parallel irregular operations. The later research and scale assignments remain
 substantial work. Keep the [completion ledger](20-syllabus-contract.md#206-completion-ledger) honest
 about that distinction while building your portfolio.
+
+
+## 29.8 Deeper implemented compiler paths
+
+The next block of the book replaces several remaining isolated exercises with integrated programs.
+[Chapter 30](30-source-to-ssa.md) constructs and verifies SSA from source;
+[Chapter 31](31-optimization.md) implements path-sensitive constant propagation and effect-aware DCE;
+[Chapter 32](32-machine-backends.md) executes a register allocation and emits native C; and
+[Chapter 33](33-dynamic-tensor-compiler.md) compiles dynamic float32 tensor expressions with fusion
+and actual memory reuse. These are implemented and tested CPU paths. Their measurements and
+limitations are distinct from the later real-GPU and distributed-scale milestones.
+
+[Chapter 34](34-dynamic-training.md) adds shape-aware reverse-mode autodiff, independently checked
+gradients, and generated forward/backward training with changing minibatch sizes and one executable.
+
+[Chapter 35](35-register-tiled-gpu.md) supplies a real-device shared/register-tiled GEMM experiment,
+including irregular-shape checks and device-event measurements. Profiler evidence, tensor-core
+optimization, and matched competitive baselines remain additional milestones.

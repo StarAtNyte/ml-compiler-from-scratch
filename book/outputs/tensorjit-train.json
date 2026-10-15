@@ -1,0 +1,19 @@
+{
+  "seed": 7,
+  "steps": 100,
+  "batch_sizes": [
+    8,
+    16,
+    32
+  ],
+  "learning_rate": 0.15,
+  "results": {
+    "initial_loss": 3.1259913444519043,
+    "final_loss": 1.9817480989559044e-14,
+    "parameter_max_error": 1.1920928955078125e-07,
+    "bias_max_error": 1.1920928955078125e-07,
+    "compiled_variants": 1,
+    "calls": 100,
+    "kernels": 9
+  }
+}

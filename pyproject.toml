@@ -13,7 +13,10 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [tool.setuptools]
-packages = ["uopc"]
+packages = ["uopc", "minicc", "tensorjit", "labs", "labs.kernels"]
+
+[tool.setuptools.package-data]
+"labs.kernels" = ["*.cuh"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
