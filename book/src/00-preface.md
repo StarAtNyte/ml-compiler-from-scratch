@@ -8,6 +8,19 @@ is an ML compiler. This book builds one from nothing: no starter code, no hidden
 lines of Python that generate C and CUDA. By the last chapter it trains a GPT on Shakespeare, and you
 will understand every line of every kernel it ran.
 
+## The complete learning path
+
+New to systems programming? Start with [Foundations](00-prerequisites.md), whose labs cover
+programming, C memory, tensor indexing, differentiation, and measurement. Chapters 1–15 then build
+the reference compiler. After the appendices, [Chapters 20–29](20-syllabus-contract.md) develop
+compiler theory, real GPU optimization, dynamic execution, runtime systems, and research practice.
+The advanced chapters contain worked explanations and implementation assignments. Their completion
+gates distinguish study, implementation, correctness, and measured performance; the reference
+compiler does not already implement every extension.
+
+The [syllabus contract](20-syllabus-contract.md) maps every supplied course topic to material and
+evidence. Use it to track the original course while following the expanded self-study sequence.
+
 ## What you'll have built
 
 The compiler is called `uopc` (after its one data structure, the *UOp*). By the end of the book

@@ -1,4 +1,12 @@
-# Compilers for Machine Learning — course syllabus (as given)
+# Compilers for Machine Learning — archived course syllabus
+
+This file preserves the version originally used for Chapters 1–15. The subsequently supplied syllabus
+moves kernel fusion/fission into week 4, restricts that week's shapes to rank below two, and moves
+general movement ops and autodiff into week 5. It also explicitly requests dtype broadcasting.
+Use the [syllabus contract](src/20-syllabus-contract.md) for the requirement-by-requirement mapping
+and documented implementation differences. Start the expanded self-study path with
+[Foundations](src/00-prerequisites.md) and continue through Chapters 20–29 after the core book.
+
 
 A hands-on one semester course where students build their own compiler from scratch, starting from elementwise programs and ending with training SOTA LLMs on GPUs. This course aggressively builds on the previous week, and is an exercise in slop management. If you let any slop in early, it will compound and you will not finish the class.
 

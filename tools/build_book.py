@@ -32,7 +32,9 @@ REPO = os.environ.get("REPO_URL", "https://github.com/StarAtNyte/ml-compiler-fro
 WEEKS = {"00": "", "01": "Week 1", "02": "Week 1", "03": "Week 1", "04": "Week 2", "05": "Week 3", "06": "Week 4",
          "07": "Week 5", "08": "Week 5", "09": "Week 5", "10": "Week 6", "11": "Week 6", "12": "Week 7",
          "13": "Week 8", "14": "Weeks 9–10", "15": "Weeks 9–14", "16": "Appendix A", "17": "Appendix B", "18": "Appendix C",
-         "19": "Appendix D"}
+         "19": "Appendix D", "20": "Advanced track", "21": "Advanced track", "22": "Advanced track",
+         "23": "Advanced track", "24": "Advanced track", "25": "Capstone", "26": "Advanced track", "27": "Advanced track",
+         "28": "Advanced track", "29": "Frontier preparation"}
 
 # files each chapter teaches: shown, collapsed, at the end of the chapter ("Full code for this chapter")
 CHAPTER_CODE = {
@@ -193,7 +195,8 @@ def sidebar(meta, part_at, cur: str | None) -> str:
   items = []
   for stem, t, _ in meta:
     if stem[:2] in part_at: items.append(f'<div class="nav-part">{html.escape(part_at[stem[:2]])}</div>')
-    num = "" if stem[:2] == "00" else (stem[:2].lstrip("0") if int(stem[:2]) < 16 else "ABCD"[int(stem[:2]) - 16])
+    chapter_number = int(stem[:2])
+    num = "" if chapter_number == 0 else ("ABCD"[chapter_number - 16] if 16 <= chapter_number <= 19 else str(chapter_number))
     label = re.sub(r"^(\d+\.|Appendix [A-D][:.])\s*", "", t).replace("`", "")
     items.append(f'<a href="{stem}.html"{" class=cur aria-current=page" if stem == cur else ""}>'
                  f'<span class="nav-num">{num}</span><span>{html.escape(label)}</span></a>')
@@ -317,13 +320,14 @@ def landing(meta, part_at, stats) -> str:
 <main class="landing">
   <section class="hero">
     <div class="hero-text">
-      <div class="kicker">Course notes for a 14-week compiler course</div>
+      <div class="kicker">From compiler foundations to frontier systems</div>
       <h1>Building an ML Compiler <em>from Scratch</em></h1>
       <p class="lede">The book follows one small compiler, <code>uopc</code>, as it is built week by week: a graph IR and a rewrite
       engine first, then C code generation, loops, kernel fusion, automatic differentiation, CPU and GPU optimization,
-      and finally training a GPT. Code listings are taken from the repository and the outputs come from running it.</p>
+      and training a GPT. Continue through compiler analysis, GPU engineering, dynamic execution, numerical methods,
+      and distributed systems, with runnable labs and a frontier-lab preparation track.</p>
       <div class="cta"><a class="btn primary" href="{meta[0][0]}.html">Start reading</a>
-        <a class="btn" href="{meta[1][0]}.html">Jump to chapter 1</a>
+        <a class="btn" href="01-uops.html">Jump to chapter 1</a>
         <a class="btn ghost" href="book.pdf">{"Download PDF" if stats["pages"] == "PDF" else f"PDF · {stats['pages']}"}</a></div>
       <dl class="facts">
         <div><dt>Chapters</dt><dd>{stats["chapters"]}</dd></div><div><dt>Diagrams</dt><dd>{stats["diagrams"]}</dd></div>
@@ -362,8 +366,8 @@ def for_print(stem: str, body: str) -> str:
 
 def single_page(meta, bodies) -> str:
   """Every chapter on one page, for printing to PDF: a cover, then chapters, no app chrome."""
-  cover = (f'<section class="cover"><div class="kicker">Course notes for a 14-week compiler course</div><h1>{TITLE}</h1>'
-           f'<p>A graph IR, rewriting, code generation, kernel fusion, autodiff, GPUs, and training a GPT.</p><p class="cover-url">{REPO}</p></section>')
+  cover = (f'<section class="cover"><div class="kicker">From compiler foundations to frontier systems</div><h1>{TITLE}</h1>'
+           f'<p>Compiler construction, GPU engineering, numerical analysis, dynamic execution, and frontier systems.</p><p class="cover-url">{REPO}</p></section>')
   toc = "".join(f'<li><a href="#{s}">{html.escape(t)}</a></li>' for s, t, _ in meta)
   chs = "".join(f'<section id="{s}" class="chapter-break"><article class="prose">{for_print(s, b)}</article></section>'
                 for (s, _, _), b in zip(meta, bodies))

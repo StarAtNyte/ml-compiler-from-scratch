@@ -6,3 +6,5 @@
 12 | Part V: Accelerators
 14 | Part VI: Real models
 16 | Appendices
+20 | Part VII: Advanced engineering
+26 | Part VIII: Frontier systems and research

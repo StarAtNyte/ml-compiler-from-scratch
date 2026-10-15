@@ -788,8 +788,6 @@ code.
 
 ### How to run the GPU test if you have a GPU
 
-@include tests/test_w07_gpu.py#_has_cuda
-
 @include tests/test_w07_gpu.py#test_cuda_smem_gemm_on_gpu
 
 The test is skipped unless `CUDA()` constructs successfully, so it runs automatically on a machine with a

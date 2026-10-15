@@ -31,6 +31,8 @@ jobs:
         run: |
           sudo apt-get update -q && sudo apt-get install -y --no-install-recommends poppler-utils
           python tools/build_book.py --pdf
+      - name: Check book links
+        run: python tools/check_book.py
       - uses: actions/upload-pages-artifact@v3
         with:
           path: book/site

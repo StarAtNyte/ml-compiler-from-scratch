@@ -25,7 +25,8 @@ project ideas.
 
 **Where this fits:** [Chapter 14](14-gpt.md) trained a GPT and padded its sampling loop to a fixed length
 to dodge recompilation (NOTES 18). This chapter explains why that trick was necessary and what replaces it.
-After this come the appendices: the op reference ([Appendix A](16-appendix-reference.md)), testing and
+Continue into the [advanced track](20-syllabus-contract.md) for guided compiler, GPU, dynamic execution,
+and runtime labs. The following reference material remains available in the appendices: the op reference ([Appendix A](16-appendix-reference.md)), testing and
 debugging ([Appendix B](17-appendix-testing.md)), the glossary and quiz bank
 ([Appendix C](18-appendix-glossary.md)), and the source listing ([Appendix D](19-appendix-source.md)).
 
